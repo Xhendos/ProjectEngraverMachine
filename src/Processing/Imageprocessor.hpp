@@ -4,13 +4,13 @@ class Imageprocessor
 {
 	private:
 		void *shared_mem;										/* Pointer to the shared memory object where raw RGB values sit */
-		std::vector< std::vector<int> > vec;					
-	
-		int width;
-		int height;
-		
+		std::vector< std::vector<int> > vec;
+		unsigned int width;
+		unsigned int height;
+
 	public:
-		Imageprocessor(void *sm, int w, int h);
-		
+		Imageprocessor(void *sm, unsigned int w, unsigned int h);
+
 		std::vector<unsigned char> toGrey(void *start);
+		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
 };

@@ -2,6 +2,7 @@
 
 #include "Camera.hpp"
 #include "../Processing/Imageprocessor.hpp"
+#include <vector>
 
 int main()
 {
@@ -9,6 +10,8 @@ int main()
 	void *shared_mem = c.capture(420, 594);
 
 	Imageprocessor proc(shared_mem, 420, 594);
-	proc.toGrey(shared_mem);
+	std::vector<unsigned char> grey = proc.toGrey(shared_mem);
+	proc.blur(grey);
 
+	return 0;
 }

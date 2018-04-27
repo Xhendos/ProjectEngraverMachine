@@ -115,7 +115,7 @@ void *Camera::capture(int width, int height)
 	/* This is step 5 in the activity diagram */
 	std::vector<struct buffer_info> buffers;						/* Data structure to hold all buffers and its shared memory object */
 
-	for(int index = 0; index < rbf.count; index++)
+	for(unsigned int index = 0; index < rbf.count; index++)
 	{
 		struct v4l2_buffer buf;
 		memset(&buf, 0, sizeof(buf));								/* Set all the bits to 0 so VIDIOC_QUERYBUF does not give false positives. */
@@ -157,7 +157,7 @@ void *Camera::capture(int width, int height)
 	}
 
 
-	for(int index = 0; index < rbf.count; index++)
+	for(unsigned int index = 0; index < rbf.count; index++)
 	{
 		if(xioctl(file_des, VIDIOC_DQBUF, &buffers[index].buffer) != 0)
 		{
@@ -175,7 +175,7 @@ void *Camera::capture(int width, int height)
 
 
 	//fputc('{', fp);
-	for(int index = 0; index < buffers[0].buffer.bytesused; index++)
+	for(unsigned int index = 0; index < buffers[0].buffer.bytesused; index++)
 	{
 		fprintf(fp, "%d\n", *((char *)buffers[0].start + index));
 	}
