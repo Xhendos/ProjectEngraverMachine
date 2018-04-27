@@ -63,7 +63,7 @@ void Camera::initialise()
 
 }
 
-void Camera::capture(int width, int height)
+void *Camera::capture(int width, int height)
 {
 	struct v4l2_format			fmt = {0};							/* Describes the stream data format */
 	struct v4l2_requestbuffers 	rbf = {0};							/* */
@@ -187,4 +187,6 @@ void Camera::capture(int width, int height)
 	{
 		perror("[DRIVER] Error in VIDIOC_STREAMOFF");
 	}
+
+	return buffers[0].start;
 }

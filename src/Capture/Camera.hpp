@@ -45,5 +45,5 @@ class Camera
 	public:
 		Camera(std::string fname);
 
-		void capture(int width, int height);
+		void *capture(int width, int height);
 };
