@@ -5,11 +5,11 @@
 #include <string.h>													/* strerror() */
 #include <errno.h>													/* global variable errno */
 
-#include <sys/ioctl.h>												/* ioctl() */
+#include <sys/ioctl.h>
 #include <stdio.h>
 
-#include <vector>													/* std::vector */
-		
+#include <vector>
+
 #include <sys/mman.h>												/* mmap() */
 
 Camera::Camera(std::string fname)
@@ -95,8 +95,8 @@ void Camera::capture(int width, int height)
 
 
 	rbf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	rbf.memory = V4L2_MEMORY_MMAP;									/* Retrieve the information by a shared memory object. */
-	rbf.count = 1;													/* 1 buffer available, but can be changed after VIDIOC_REQBUFS */
+	rbf.memory = V4L2_MEMORY_MMAP;									/* The way we want to retrieve the information is by a shared memory object. */
+	rbf.count = 1;													/* Make 1 buffer available by default. After requesting this var could be changed */
 
 	if(xioctl(file_des, VIDIOC_REQBUFS, &rbf) == -1)				/* Try to initialise memory mapped memory */
 	{
@@ -106,7 +106,7 @@ void Camera::capture(int width, int height)
 			exit(8);
 		} else
 		{
-			fprintf(stderr, "[DRIVER] Cannot request buffer.\n");	
+			perror("[DRIVER] Failed to request buffers.\n");
 			exit(9);
 		}
 	}
@@ -165,11 +165,23 @@ void Camera::capture(int width, int height)
 			exit(12);
 		}
 
-		printf("%d\n", buffers[index].buffer.length);
-		printf("%d\n", buffers[index].buffer.bytesused);
+		printf("[DRIVER] buffer size is %d\n", buffers[index].buffer.length);
+		printf("[DRIVER] bytes in buffer used is %d\n\n", buffers[index].buffer.bytesused);
+
 	}
 
+	FILE *fp = fopen("output.txt", "w");
+	if(fp == NULL) printf("Failed to open file\n");
 
+
+	//fputc('{', fp);
+	for(int index = 0; index < buffers[0].buffer.bytesused; index++)
+	{
+		fprintf(fp, "%d\n", *((char *)buffers[0].start + index));
+	}
+	//fputs("};", fp);
+
+	fclose(fp);
 
 	if(xioctl(file_des, VIDIOC_STREAMOFF, &buffers[0].buffer.type) < 0)
 	{

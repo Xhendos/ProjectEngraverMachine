@@ -17,9 +17,14 @@
  * VIDIOC_DQBUF		-> Dequeue a filled buffer from the driver's outgoing queue. Result is stored in the struct v4l2_buffer
  * VIDIOC_STREAMOFF	-> Stop the streaming I/O which got the same struct v4l2_buffer type as parameter as STREAMON.
  */
-
 class Camera
-{
+{		/*
+		struct buffer
+		{
+			void *start;
+			size_t length;
+		};*/
+
 	private:
 		char ready = 0;
 		std::string filename;

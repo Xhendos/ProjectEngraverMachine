@@ -1,9 +1,14 @@
 #include <iostream>
 
 #include "Camera.hpp"
+#include "../Processing/Imageprocessor.hpp"
 
 int main()
 {
 	Camera c("/dev/video0");
-	c.capture(124, 46);
+	void *shared_mem = c.capture(420, 594);
+
+	Imageprocessor proc(shared_mem, 420, 594);
+	proc.toGrey(shared_mem);
+
 }
