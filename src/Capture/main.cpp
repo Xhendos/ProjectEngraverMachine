@@ -14,6 +14,8 @@ int main()
 	Imageprocessor proc(shared_mem, 420, 594);
 	std::vector<unsigned char> grey = proc.toGrey(shared_mem);
 	std::vector<unsigned char> blur = proc.blur(grey);
+    proc.sobelOperator(blur);
+    
 
 	return 0;
 }

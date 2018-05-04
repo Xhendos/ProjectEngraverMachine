@@ -1,6 +1,8 @@
 #include <vector>
 
 
+
+
 class Imageprocessor
 {
 	private:
@@ -9,15 +11,13 @@ class Imageprocessor
 		unsigned int width;
 		unsigned int height;
 
-
-
-    struct sobel
-    {
-        short int gx;
-        short int gy;
-        short int m;
-    };
-
+        
+struct sobel
+{
+    short int gx;
+    short int gy;
+    short int m;
+};
 
 	public:
     	Imageprocessor(void *sm, unsigned int w, unsigned int h);
@@ -25,6 +25,6 @@ class Imageprocessor
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
 
-        std::vector<struct sobel> sobelOperator(std::vector<unsigned char> grey);    
+        std::vector<sobel> sobelOperator(std::vector<unsigned char> grey);    
     
 };

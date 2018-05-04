@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 
+#include <math.h>                                                           /* sqrt() */
+
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
 	shared_mem = sm;
@@ -140,9 +142,9 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 }
 
 
-std::vector<struct sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
+std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
 {
-    std::vector<struct sobel> sobels;    
+    std::vector<Imageprocessor::sobel> sobels;    
 
     for(int index = 0; index < grey.size(); index++)
     {
@@ -193,11 +195,23 @@ std::vector<struct sobel> Imageprocessor::sobelOperator(std::vector<unsigned cha
                 (grey[index + width - 1]) +
                 (grey[index + width + 1]));
 
-        s.m = s.gx + s.gy;
+        s.m = sqrt(s.gx * s.gx + s.gy * s.gy);
 
         sobels.push_back(s);
-  }
+    }
 
+    
+	sf::Image image;
+  	image.create(420, 594);
+  	for(int y=0; y<594; y++){
+  		for(int x=0; x<420; x++){
+           	int index=(y*420 + x);
+         	sf::Color c(sobels[index].m, sobels[index].m, sobels[index].m);
+          	image.setPixel(x,y,c);
+        }
+  	}
+
+	image.saveToFile("GREYpicture3.png");
     return sobels;
 }
 
