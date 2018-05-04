@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 
-#include <math.h>                                                           /* sqrt() */
+#include <math.h>                                                           /* sqrt(), M_PI, atan() */
 
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
@@ -144,58 +144,60 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 
 std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
 {
-    std::vector<Imageprocessor::sobel> sobels;    
+    std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
 
-    for(int index = 0; index < grey.size(); index++)
+    for(int index = 0; index < grey.size(); index++)                        
     {
-        if(index < width)        
+        if(index < width)                                                   /* Exception for the first row*/    
         {
-            struct sobel s = {0, 0, 0};
+            struct sobel s = {0, 0, 0, 0};
             sobels.push_back(s);
 
             continue;
         }  
 
-        if(index > (height - 1) * width)
-        {
-            struct sobel s = {0, 0, 0};
+        if(index > (height - 1) * width)                                    /* Exception for the last row */
+        { 
+            struct sobel s = {0, 0, 0, 0};
             sobels.push_back(s);
 
             continue;
         } 
 
-        if(!(index % width))
+        if(!(index % width))                                                /* Exception for the first column */
         {
-            struct sobel s = {0, 0, 0};
+            struct sobel s = {0, 0, 0, 0};
             sobels.push_back(s);
 
             continue;
         } 
 
-        if(!((index + 1) % width))
+        if(!((index + 1) % width))                                          /* Exception for the last column */
         {
-            struct sobel s = {0, 0, 0};
+            struct sobel s = {0, 0, 0, 0};
             sobels.push_back(s);
 
             continue;
         }
 
         struct sobel s;
-        s.gx =  ((grey[index - 1] * -2) +
-                (grey[index - width - 1] * -1) +
-                (grey[index + width - 1] * -1) + 
-                (grey[index + 1] * 2) + 
-                (grey[index + width + 1]) +
-                (grey[index - width + 1]));
+        s.gx =  ((grey[index - 1] * -2) +                                   /* I(u-1, v)    */
+                (grey[index - width - 1] * -1) +                            /* I(u-1, v-1)  */
+                (grey[index + width - 1] * -1) +                            /* I(u-1, v+1)  */  
+                (grey[index + 1] * 2) +                                     /* I(u+1, v)    */
+                (grey[index + width + 1]) +                                 /* I(u+1, v+1)  */
+                (grey[index - width + 1]));                                 /* I(u+1, v-1)  */
         
-        s.gy =  ((grey[index - width] * -2) + 
-                (grey[index - width - 1] * -1) + 
-                (grey[index - width + 1] * -1) +
-                (grey[index + width] * 2) +
-                (grey[index + width - 1]) +
-                (grey[index + width + 1]));
+        s.gy =  ((grey[index - width] * -2) +                               /* I(u, v-1)    */
+                (grey[index - width - 1] * -1) +                            /* I(u-1, v-1)  */
+                (grey[index - width + 1] * -1) +                            /* I(u+1, v-1)  */
+                (grey[index + width] * 2) +                                 /* I(u, v+1)    */
+                (grey[index + width - 1]) +                                 /* I(u-1, v+1)  */
+                (grey[index + width + 1]));                                 /* I(u+1, v+1)  */
 
-        s.m = sqrt(s.gx * s.gx + s.gy * s.gy);
+        s.m = sqrt(s.gx * s.gx + s.gy * s.gy);                              /* magnitude = square root(gradient_x^2 + gradient_y^2) */
+
+        s.a = atan((double) s.gy / (double) s.gx);                          /* angle = tan^(-1) (gradient_y / gradient_x) */       
 
         sobels.push_back(s);
     }
