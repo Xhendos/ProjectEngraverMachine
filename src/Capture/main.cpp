@@ -9,9 +9,11 @@ int main()
 	Camera c("/dev/video0");
 	void *shared_mem = c.capture(420, 594);
 
+    std::cout << sizeof(short int) << std::endl;
+
 	Imageprocessor proc(shared_mem, 420, 594);
 	std::vector<unsigned char> grey = proc.toGrey(shared_mem);
-	proc.blur(grey);
+	std::vector<unsigned char> blur = proc.blur(grey);
 
 	return 0;
 }

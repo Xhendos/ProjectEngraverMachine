@@ -138,3 +138,70 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 
 	return blurred;
 }
+
+
+std::vector<struct sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
+{
+    std::vector<struct sobel> sobels;    
+
+    for(int index = 0; index < grey.size(); index++)
+    {
+        if(index < width)        
+        {
+            struct sobel s = {0, 0, 0};
+            sobels.push_back(s);
+
+            continue;
+        }  
+
+        if(index > (height - 1) * width)
+        {
+            struct sobel s = {0, 0, 0};
+            sobels.push_back(s);
+
+            continue;
+        } 
+
+        if(!(index % width))
+        {
+            struct sobel s = {0, 0, 0};
+            sobels.push_back(s);
+
+            continue;
+        } 
+
+        if(!((index + 1) % width))
+        {
+            struct sobel s = {0, 0, 0};
+            sobels.push_back(s);
+
+            continue;
+        }
+
+        struct sobel s;
+        s.gx =  ((grey[index - 1] * -2) +
+                (grey[index - width - 1] * -1) +
+                (grey[index + width - 1] * -1) + 
+                (grey[index + 1] * 2) + 
+                (grey[index + width + 1]) +
+                (grey[index - width + 1]));
+        
+        s.gy =  ((grey[index - width] * -2) + 
+                (grey[index - width - 1] * -1) + 
+                (grey[index - width + 1] * -1) +
+                (grey[index + width] * 2) +
+                (grey[index + width - 1]) +
+                (grey[index + width + 1]));
+
+        s.m = s.gx + s.gy;
+
+        sobels.push_back(s);
+  }
+
+    return sobels;
+}
+
+
+
+
+
