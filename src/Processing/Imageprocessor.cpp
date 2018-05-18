@@ -219,5 +219,8 @@ std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<uns
 
 
 
+/* https://stackoverflow.com/questions/35238047/how-do-i-interpret-the-orientation-of-the-gradient-when-using-imgradient-in-matl */
+/* https://stackoverflow.com/questions/19815732/what-is-gradient-orientation-and-gradient-magnitude */
+
 
 
