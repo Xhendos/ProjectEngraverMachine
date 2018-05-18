@@ -10,16 +10,18 @@ class Imageprocessor
 		unsigned int height;                                    /* Amount of pixels in the height */
 
         
-    struct sobel
-    {
-        short int gx;                                           /* Gradient in the x direction */
-        short int gy;                                           /* Gradient in the y direction */
-        short int m;                                            /* Magnitude (edge strength) */
-        double    a;                                            /* Local edge orientation angle (radians) */
-    };
 
 	public:
-    	Imageprocessor(void *sm, unsigned int w, unsigned int h);
+              
+        struct sobel
+        {
+            short int gx;                                       /* Gradient in the x direction */
+            short int gy;                                       /* Gradient in the y direction */
+            short int m;                                        /* Magnitude (edge strength) */
+            double    a;                                        /* Local edge orientation angle (degrees) */
+        };
+    	
+        Imageprocessor(void *sm, unsigned int w, unsigned int h);
 
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
