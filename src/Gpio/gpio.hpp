@@ -13,21 +13,13 @@ extern std::string EDGE_NONE;
 
 class gpio
 {
-    private: 
+    private:
         gpio() {}                                                   /* Disallow to create an instance */
 
     public:
-        struct gpio_header
-        {
-            unsigned char pin;                                      /* Pin number */
-            std::string direction;                                  /* Is 'out' or 'in' */
-            unsigned char value;                                    /* If direction is 'out', this can be written '0' or '1' */
-            std::string edge;                                       /* Is 'none', 'rising' or 'falling' */
-            unsigned char active_low;                               /* Is '0' [means false] or '1' [means true] */
-        };
-
-    
-        static unsigned char export_gpio(gpio_header header);      
+    	static unsigned char export_gpio(unsigned char pin);
+		static unsigned char set_direction(unsigned char pin, std::string direction);
+		static unsigned char set_value(unsigned char pin, unsigned char value);
 };
 
 #endif

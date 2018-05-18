@@ -9,12 +9,13 @@
 
 #include "gpio.hpp"
 
-#include <stdio.h>                                              /* fopen(), fwrite() */
+#include <stdio.h>
 #include <stdlib.h>                                             /* exit() */
 
-//#include <string>                                               
+#include <fcntl.h>												/* O_WRONLY */
 #include <cstring>                                              /* strerror() */
 
+#include <unistd.h>												/* write(), close() */
 std::string DIR_IN      = "in";
 std::string DIR_OUT     = "out";
 
@@ -23,31 +24,105 @@ std::string EDGE_FALL   = "falling";
 std::string EDGE_NONE   = "none";
 
 
-unsigned char gpio::export_gpio(gpio::gpio_header header)
+unsigned char gpio::export_gpio(unsigned char pin)
 {
-    FILE *fp = fopen(EXPORT, "w");                              /* Gets a file descriptor for write-only to the export file */
-    
-    if(fp == NULL)                                              /* If we could not open the export file, we should exit the program */ 
-    {
-        perror("Failed to open /sys/class/gpio/export");
-        exit(1);                                                
-    }
+	FILE *fp = fopen(EXPORT, "w");
 
-                                                                
-    if(fprintf(fp, "%d", header.pin) != std::to_string(header.pin).size())
-    {   
-        perror("Cannot write to export");
-        exit(1);
-    }
+	printf("%s\n", EXPORT);
+	if(fp == NULL)
+	{
+		perror("Cannot open " EXPORT);
+		return 1;
+	}
 
-    
-    if(fclose(fp))
-    {
-        perror("Cannot close file pointer (1)");
-        printf("%s\n", strerror(errno));
-        exit(1);
-    }
+	if(fprintf(fp, "%d\n", (int) pin) != std::to_string(pin).size() + 1)
+	{
+		perror("[GPIO] Failed to write");
+		return 1;
+	}
 
-    
+	if(fflush(fp))
+	{
+		perror("[GPIO] Failed to flush");
+		perror("[GPIO] Maybe you tried to export a gpio pin that already has been exported?");
+		return 1;
+	}
+
+	if(fclose(fp))
+	{
+		perror("[GPIO] Failed to close");
+		return 1;
+	}
+
     return 0;
+}
+
+
+unsigned char gpio::set_direction(unsigned char pin, std::string direction)
+{
+	char path[50];
+	snprintf(path, 50, SYSFS"gpio%d/direction", pin);
+
+	FILE *fp = fopen(path, "w");
+
+	if(fp == NULL)
+	{
+		perror("[GPIO] [set_direction] Cannot open file");
+		return 1;
+	}
+
+	if(fprintf(fp, "%s\n", direction.c_str()) != direction.size() + 1)
+	{
+		perror("[GPIO] [set_direction] Failed to write");
+		return 1;
+	}
+
+	if(fflush(fp))
+	{
+		perror("[GPIO] [set_direction] Failed to flush");
+		return 1;
+	}
+
+	if(fclose(fp))
+	{
+		perror("[GPIO] [set_direction] Failed to close");
+		return 1;
+	}
+
+	return 0;
+}
+
+unsigned char gpio::set_value(unsigned char pin, unsigned char value)
+{
+    char path[50];
+    snprintf(path, 50, SYSFS"gpio%d/value", pin);
+
+    FILE *fp = fopen(path, "w");
+
+    if(fp == NULL)
+    {
+        perror("[GPIO] [set_value] Cannot open file");
+        return 1;
+    }
+
+    if(fprintf(fp, "%d\n", value) != std::to_string(value).size() + 1)
+    {
+        perror("[GPIO] [set_value] Failed to write");
+        return 1;
+    }
+
+    if(fflush(fp))
+    {
+        perror("[GPIO] [set_value] Failed to flush");
+        return 1;
+    }
+
+    if(fclose(fp))
+	{
+        perror("[GPIO] [set_value] Failed to close");
+        return 1;
+    }
+
+    return 0;
+
 }
