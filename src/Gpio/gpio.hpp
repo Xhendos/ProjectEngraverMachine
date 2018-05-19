@@ -18,8 +18,13 @@ class gpio
 
     public:
     	static unsigned char export_gpio(unsigned char pin);
+        static unsigned char unexport_gpio(unsigned char pin);
+
 		static unsigned char set_direction(unsigned char pin, std::string direction);
 		static unsigned char set_value(unsigned char pin, unsigned char value);
+        static unsigned char set_edge(unsigned char pin, std::string edge);
+        static unsigned char set_activelow(unsigned char pin, unsigned char low);
+
 };
 
 #endif
