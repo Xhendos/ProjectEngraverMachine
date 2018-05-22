@@ -2,7 +2,7 @@
 #define EXPORT          SYSFS"export"
 #define UNEXPORT        SYSFS"unexport"
 
-#include "gpio.hpp"
+#include "Gpio.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>                                             /* exit() */

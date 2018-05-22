@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 
-#include <math.h>                                                           /* sqrt(), M_PI, atan() */
+#include <math.h>                                                           /* sqrt(), M_PI, atan2() */
 
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
@@ -197,7 +197,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<uns
 
         s.m = sqrt(s.gx * s.gx + s.gy * s.gy);                              /* magnitude = square root(gradient_x^2 + gradient_y^2) */
 
-        s.a = atan((double) s.gy / (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */       
+        s.a = atan2((double) s.gy, (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */       
                                                                             /* degree = angle * 180 / PI */
         sobels.push_back(s);
     }
