@@ -1,0 +1,2 @@
+*.o		#All object files created by the compiler
+*.png	#All images that served as debug
