@@ -170,22 +170,11 @@ void *Camera::capture(int width, int height)
 
 	}
 
-	FILE *fp = fopen("output.txt", "w");
-	if(fp == NULL) printf("Failed to open file\n");
-
-
-	//fputc('{', fp);
-	for(unsigned int index = 0; index < buffers[0].buffer.bytesused; index++)
-	{
-		fprintf(fp, "%d\n", *((char *)buffers[0].start + index));
-	}
-	//fputs("};", fp);
-
-	fclose(fp);
 
 	if(xioctl(file_des, VIDIOC_STREAMOFF, &buffers[0].buffer.type) < 0)
 	{
 		perror("[DRIVER] Error in VIDIOC_STREAMOFF");
+		exit(13);
 	}
 
 	return buffers[0].start;
