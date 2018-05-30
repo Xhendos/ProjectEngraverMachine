@@ -1,5 +1,5 @@
 Imageprocessor.o: ./src/Processing/Imageprocessor.cpp ./src/Processing/Imageprocessor.hpp
-	g++ -c ./src/Processing/Imageprocessor.cpp 
+	g++ -c ./src/Processing/Imageprocessor.cpp -lsfml-graphics
 
 Gpio.o: ./src/Gpio/Gpio.cpp ./src/Gpio/Gpio.hpp
 	g++ -c ./src/Gpio/Gpio.cpp
@@ -11,4 +11,4 @@ main.o: ./src/main.cpp
 	g++ -c ./src/main.cpp
 
 program: Imageprocessor.o Gpio.o Camera.o main.o
-	g++ -o program Imageprocessor.o Gpio.o Camera.o main.o -I /home/xhendos/Downloads/SFML-2.4.2/include -lsfml-graphics
+	g++ -o program Imageprocessor.o Gpio.o Camera.o main.o -lsfml-graphics

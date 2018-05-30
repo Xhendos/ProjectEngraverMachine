@@ -6,7 +6,11 @@
 
 int main(int argc, char *argv[])
 {
-    printf("Hello, world");
+	Camera c("/dev/video0");
+	void *sm = c.capture(420, 594);
+
+	Imageprocessor i(sm, 420, 594);
+	std::vector<unsigned char> vec = i.toGrey(sm);
 
 
     return 0;

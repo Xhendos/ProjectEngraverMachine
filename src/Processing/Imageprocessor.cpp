@@ -32,7 +32,6 @@ std::vector<unsigned char> Imageprocessor::toGrey(void *start)
 		grey.push_back(((r + g + b) / 3));									/* Push the average of the rgb to the vector (average is greyscale) */
 	}
 
-
     sf::Image image;
     image.create(420, 594);
     for(int y=0; y<594; y++){
