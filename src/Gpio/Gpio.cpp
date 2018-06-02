@@ -225,7 +225,7 @@ unsigned char gpio::set_activelow(unsigned char pin, unsigned char low)
 
 
 
-static std::string get_direction(unsigned char pin)
+std::string get_direction(unsigned char pin)
 {
 	char path[50];
 	std::string dir;
@@ -251,9 +251,9 @@ static std::string get_direction(unsigned char pin)
 	
 }
 
-static unsigned char get_value(unsigned char pin)
+unsigned char get_value(unsigned char pin)
 {
-	chat path[50];
+	char path[50];
 	char c;
 	
 	snprintf(path, 50, SYSFS"gpio%d/value", pin);

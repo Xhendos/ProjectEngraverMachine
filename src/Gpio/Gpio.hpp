@@ -29,7 +29,6 @@ class gpio
 		static unsigned char get_value(unsigned char pin);
 		static std::string get_edge(unsigned char pin);
 		static unsigned char get_activelow(unsigned char pin);
-
 };
 
 #endif
