@@ -141,7 +141,7 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 }
 
 
-std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
+std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned char> grey)
 {
     std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
 

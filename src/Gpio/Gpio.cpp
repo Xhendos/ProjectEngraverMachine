@@ -222,3 +222,56 @@ unsigned char gpio::set_activelow(unsigned char pin, unsigned char low)
 
     return 0;
 }
+
+
+
+static std::string get_direction(unsigned char pin)
+{
+	char path[50];
+	std::string dir;
+
+	snprintf(path, 50, SYSFS"gpio%d/direction", pin);
+
+
+	FILE *fp = fopen(path, "r");
+
+	if(fp == NULL)
+	{
+		perror("[GPIO] [get_direction] Cannot open file");
+		return "none";
+	}
+
+	if(fscanf(fp, "%s", dir) == -1)
+	{
+		perror("[GPIO] [get_direction] Cannot read from file");
+		return "none";
+	}
+
+	return dir;
+	
+}
+
+static unsigned char get_value(unsigned char pin)
+{
+	chat path[50];
+	char c;
+	
+	snprintf(path, 50, SYSFS"gpio%d/value", pin);
+	
+	FILE *fp = fopen(path, "r");
+
+	if(fp == NULL)
+	{
+		perror("[GPIO] [get_value] Cannot open file");
+		return 2;
+	}
+
+	if(fscanf(fp, "%c", c) == -1)
+	{
+		perror("[GPIO] [get_value] Cannot get value");
+		return 2;
+	}
+	
+
+	return c;
+}

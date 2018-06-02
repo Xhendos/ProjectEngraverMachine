@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	std::vector<unsigned char> grey = i.toGrey(sm);			/* Convert the RGB24 to greyscale so our next operations will succeed */
 
 	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
-	std::vector<Imageprocessor::sobel> sobel = i.sobel(blur);	/* Do the sobel operator to do the first edge detection */
+	std::vector<Imageprocessor::sobel> sobel = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
 	
 	
 
