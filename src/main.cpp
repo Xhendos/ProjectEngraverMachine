@@ -3,18 +3,29 @@
 #include "Processing/Imageprocessor.hpp"
 
 #include <stdio.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
 	if(gpio::export_gpio(14) != 14)
 		return 1;
 
+	sleep(2);
+
 	if(gpio::set_direction(14, DIR_IN))
 		return 1;
+
+	sleep(2);
+
+	if(gpio::get_direction(14) != DIR_IN)
+		return 1;
+
 
 	while(1)
 	{
 		printf("%d\n", (int) gpio::get_value(14));
+		usleep(500000);
+
 	}
 
 
