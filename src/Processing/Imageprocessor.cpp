@@ -233,6 +233,19 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			}
 		}
 	}
+
+    sf::Image image;
+    image.create(420, 594);
+    for(int y=0; y<594; y++){
+        for(int x=0; x<420; x++){
+            int index=(y*420 + x);
+            sf::Color c(grey[index], grey[index], grey[index]);
+            image.setPixel(x,y,c);
+        }
+    }
+
+	image.saveToFile("GREYpicture4.png");
+
 	return grey;
 }
 
@@ -365,9 +378,10 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 }
 
 
-std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
+std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned char> grey)
 {
     std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
+	std::vector<unsigned char> edges;
 
     for(int index = 0; index < grey.size(); index++)                        
     {
@@ -423,7 +437,8 @@ std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<uns
         s.a = atan2((double) s.gy, (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */       
                                                                             /* degree = angle * 180 / PI */
         sobels.push_back(s);
-    }
+    	edges.push_back(s.m);
+	}
 
     
 	sf::Image image;
@@ -437,6 +452,10 @@ std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<uns
   	}
 
 	image.saveToFile("GREYpicture3.png");
+
+
+	//Imageprocessor::canny(sobels, edges);
+
     return sobels;
 }
 
