@@ -12,6 +12,226 @@ Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 	height = h;
 }
 
+std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sobel> input, std::vector<unsigned char> grey)
+{
+	std::vector<Imageprocessor::sobel> output;
+
+	for(int i = 0; i < grey.size(); i++)		//making the angle region a specific angle.
+	{	
+		if (input[i].a >= 157.5 && input[i].a <= 180 | input[i].a >= 0 && input[i].a <= 22.4)
+		{
+			input[i].a = 0;
+		}
+		if (input[i].a >= 22.5 && input[i].a <= 67.4)
+		{
+			input[i].a = 45;
+		}
+		if (input[i].a >= 67.5 && input[i].a <= 112.4)
+		{
+			input[i].a = 90;
+		}
+		if (input[i].a >= 112.5 && input[i].a <= 157.4)
+		{
+			input[i].a = 135;
+		}
+
+		output[i].a = input[i].a; //processed grads as output
+
+		if (output[i].a == 0)
+		{
+			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width)) //if the targetted pixel is on the edge... (applies to all grad options) weet niet of dit nodig is.
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				/* https://www.youtube.com/watch?v=KR_zsIKpX28
+				1 2 3
+				4 5 6
+				7 8 9				 
+				
+				grey[((index-1)-width)] 								//1
+				grey[(index - width)] 									//2
+				grey[(index+1-width)] 									//3
+				grey[(index-1)]											//4
+				grey[index]												//5
+				grey[(index+1)]											//6
+				grey[((index-1)+width)]									//7
+				grey[(index+width)] 									//8
+				grey[((index+1)+width)]									//9
+				
+				*/
+				//0 degrees == horizonal filtering to check the vertical lines
+				
+				if (grey[(index-1)] >= grey[(index)] && grey[(index-1)] >= grey[(index+1)])
+				{
+					grey[(index+1)] = grey[(index+1)] * 0;
+					grey[(index)] = grey[(index)] * 0;
+				}
+				if (grey[(index)] >= grey[(index-1)] && grey[(index)] >= grey[(index+1)])
+				{
+					grey[(index+1)] = grey[(index+1)] * 0;
+					grey[(index-1)] = grey[(index-1)] * 0;
+				}
+				if (grey[(index+1)] >= grey[(index)] && grey[(index+1)] >= grey[(index-1)])
+				{
+					grey[(index)] = grey[(index+1)] * 0;
+					grey[(index-1)] = grey[(index-1)] * 0;
+				}
+			}
+		}	
+
+		if (output[i].a == 45)
+		{
+			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				//grey[((index-1)-width)]
+				//grey[index]
+				//grey[((index+1)+width)]//9
+				
+				if (grey[((index+1)+width)] >= grey[(index)] && grey[((index+1)+width)] >= grey[((index-1)-width)])
+				{
+					grey[(index+1)] = grey[(index+1)] * 0;
+					grey[(index)] = grey[(index)] * 0;
+				}
+				if (grey[(index)] >= grey[(index-1)] && grey[(index)] >= grey[(index+1)])
+				{
+					grey[(index+1)] = grey[(index+1)] * 0;
+					grey[(index-1)] = grey[(index-1)] * 0;
+				}
+				if (grey[(index+1)] >= grey[(index)] && grey[(index+1)] >= grey[(index-1)])
+				{
+					grey[(index)] = grey[(index+1)] * 0;
+					grey[(index-1)] = grey[(index-1)] * 0;
+				}
+			}
+	
+		}
+		if (output[i].a == 90)
+		{
+			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				if (grey[(index - width)] >= grey[index] && grey[(index - width)] >= grey[(index+width)])
+				{
+					grey[index] = grey[index]*0;
+					grey[(index+width)] = grey[(index+width)]*0;
+				}
+				
+				if (grey[index] >= grey[(index - width)] && grey[(index)] >= grey[(index+width)])
+				{
+					grey[(index+width)] = grey[(index+width)]*0;
+					grey[(index - width)] = grey[(index - width)]*0;
+				}
+				
+				if (grey[(index+width)] >= grey[(index - width)] && grey[(index+width)] >= grey[index])
+				{
+					grey[(index - width)] = grey[(index - width)]*0;
+					grey[index] = grey[index]*0;
+				}
+			}
+	
+		}
+		if (output[i].a == 135)
+		{
+			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				if (grey[(index+1-width)] >= grey[index] && grey[(index+1-width)] >= grey[((index-1)+width)])
+				{
+					grey[index] = grey[index]*0;
+					grey[((index-1)+width)] = grey[((index-1)+width)]*0;
+				}
+				
+				if (grey[index] >= grey[(index+1-width)] && >= grey[index] >= grey[((index-1)+width)])
+				{
+					grey[(index+1-width)] = grey[(index+1-width)]*0;
+					grey[((index-1)+width)] = grey[((index-1)+width)]*0;
+				}
+				
+				if (grey[((index-1)+width)] >= grey[(index+1-width)] && grey[((index-1)+width)] >= grey[index])
+				{
+					grey[(index+1-width)] = grey[(index+1-width)]*0;
+					grey[index] = grey[index]*0;
+				}
+			}	
+		}
+		
+		for(int i = 0; i <= grey.size(); i++)
+		{
+			if(grey[i] > HIGHTRESH) //boven treshold, i == index
+			{
+				grey[i] = grey[i];
+				
+				if(grey[i-1] >= LOWTRESH && grey[i-1] <= HIGHTRESH)
+				{
+					k = i-1;
+					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
+					{
+						grey[k] = grey[k] * -1;
+						if(k == 0)
+						{
+							break;
+						}
+						k--;
+					}
+				}
+				
+				if(grey[i+1] >= LOWTRESH && grey[i+1] <= HIGHTRESH)
+				{
+					k = i+1;
+					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
+					{
+						grey[k] = grey[k];
+						if(k == grey.size())
+						{
+							break;
+						}
+						k++;
+					}
+					i=k; //verdergaan vanaf de plek waar die gestopt is.
+				}
+			}
+			
+			if(grey[i] = >= LOWTRESH && grey[i])
+			{
+				grey[i] = grey[i] * -1;
+			}
+			
+			if(grey[i] < LOWTRESH)
+			{
+				grey[i] = 0;
+			}
+		}
+		
+		for(int i = 0; i <= grey.size(); i++)
+		{
+		if(grey[i] < 0)
+			{
+				grey[i] = 0;
+			}
+		}
+	}
+	return grey;
+}
 
 
 std::vector<unsigned char> Imageprocessor::toGrey(void *start)
@@ -31,6 +251,7 @@ std::vector<unsigned char> Imageprocessor::toGrey(void *start)
 
 		grey.push_back(((r + g + b) / 3));									/* Push the average of the rgb to the vector (average is greyscale) */
 	}
+
 
     sf::Image image;
     image.create(420, 594);
@@ -141,7 +362,7 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 }
 
 
-std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned char> grey)
+std::vector<Imageprocessor::sobel> Imageprocessor::sobelOperator(std::vector<unsigned char> grey)
 {
     std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
 
