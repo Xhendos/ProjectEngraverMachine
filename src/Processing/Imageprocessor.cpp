@@ -5,6 +5,9 @@
 
 #include <math.h>                                                           /* sqrt(), M_PI, atan2() */
 
+#define HIGHTRESH 200
+#define LOWTRESH HIGHTRESH/2
+
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
 	shared_mem = sm;
@@ -39,7 +42,7 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 
 		if (output[i].a == 0)
 		{
-			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width)) //if the targetted pixel is on the edge... (applies to all grad options) weet niet of dit nodig is.
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width)) //if the targetted pixel is on the edge... (applies to all grad options) weet niet of dit nodig is.
 			{
 				//struct sobel s = {0, 0, 0, 0};
 				//output.push_back(s);
@@ -52,40 +55,40 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 				4 5 6
 				7 8 9				 
 				
-				grey[((index-1)-width)] 								//1
-				grey[(index - width)] 									//2
-				grey[(index+1-width)] 									//3
-				grey[(index-1)]											//4
-				grey[index]												//5
-				grey[(index+1)]											//6
-				grey[((index-1)+width)]									//7
-				grey[(index+width)] 									//8
-				grey[((index+1)+width)]									//9
+				grey[((i-1)-width)] 								//1
+				grey[(i - width)] 									//2
+				grey[(i+1-width)] 									//3
+				grey[(i-1)]											//4
+				grey[i]												//5
+				grey[(i+1)]											//6
+				grey[((i-1)+width)]									//7
+				grey[(i+width)] 									//8
+				grey[((i+1)+width)]									//9
 				
 				*/
 				//0 degrees == horizonal filtering to check the vertical lines
 				
-				if (grey[(index-1)] >= grey[(index)] && grey[(index-1)] >= grey[(index+1)])
+				if (grey[(i-1)] >= grey[(i)] && grey[(i-1)] >= grey[(i+1)])
 				{
-					grey[(index+1)] = grey[(index+1)] * 0;
-					grey[(index)] = grey[(index)] * 0;
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i)] = grey[(i)] * 0;
 				}
-				if (grey[(index)] >= grey[(index-1)] && grey[(index)] >= grey[(index+1)])
+				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
 				{
-					grey[(index+1)] = grey[(index+1)] * 0;
-					grey[(index-1)] = grey[(index-1)] * 0;
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
 				}
-				if (grey[(index+1)] >= grey[(index)] && grey[(index+1)] >= grey[(index-1)])
+				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
 				{
-					grey[(index)] = grey[(index+1)] * 0;
-					grey[(index-1)] = grey[(index-1)] * 0;
+					grey[(i)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
 				}
 			}
 		}	
 
 		if (output[i].a == 45)
 		{
-			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
 			{
 				//struct sobel s = {0, 0, 0, 0};
 				//output.push_back(s);
@@ -93,31 +96,31 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			}
 			else
 			{
-				//grey[((index-1)-width)]
-				//grey[index]
-				//grey[((index+1)+width)]//9
+				//grey[((i-1)-width)]
+				//grey[i]
+				//grey[((i+1)+width)]//9
 				
-				if (grey[((index+1)+width)] >= grey[(index)] && grey[((index+1)+width)] >= grey[((index-1)-width)])
+				if (grey[((i+1)+width)] >= grey[(i)] && grey[((i+1)+width)] >= grey[((i-1)-width)])
 				{
-					grey[(index+1)] = grey[(index+1)] * 0;
-					grey[(index)] = grey[(index)] * 0;
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i)] = grey[(i)] * 0;
 				}
-				if (grey[(index)] >= grey[(index-1)] && grey[(index)] >= grey[(index+1)])
+				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
 				{
-					grey[(index+1)] = grey[(index+1)] * 0;
-					grey[(index-1)] = grey[(index-1)] * 0;
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
 				}
-				if (grey[(index+1)] >= grey[(index)] && grey[(index+1)] >= grey[(index-1)])
+				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
 				{
-					grey[(index)] = grey[(index+1)] * 0;
-					grey[(index-1)] = grey[(index-1)] * 0;
+					grey[(i)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
 				}
 			}
 	
 		}
 		if (output[i].a == 90)
 		{
-			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
 			{
 				//struct sobel s = {0, 0, 0, 0};
 				//output.push_back(s);
@@ -125,29 +128,29 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			}
 			else
 			{
-				if (grey[(index - width)] >= grey[index] && grey[(index - width)] >= grey[(index+width)])
+				if (grey[(i - width)] >= grey[i] && grey[(i - width)] >= grey[(i+width)])
 				{
-					grey[index] = grey[index]*0;
-					grey[(index+width)] = grey[(index+width)]*0;
+					grey[i] = grey[i]*0;
+					grey[(i+width)] = grey[(i+width)]*0;
 				}
 				
-				if (grey[index] >= grey[(index - width)] && grey[(index)] >= grey[(index+width)])
+				if (grey[i] >= grey[(i - width)] && grey[(i)] >= grey[(i+width)])
 				{
-					grey[(index+width)] = grey[(index+width)]*0;
-					grey[(index - width)] = grey[(index - width)]*0;
+					grey[(i+width)] = grey[(i+width)]*0;
+					grey[(i - width)] = grey[(i - width)]*0;
 				}
 				
-				if (grey[(index+width)] >= grey[(index - width)] && grey[(index+width)] >= grey[index])
+				if (grey[(i+width)] >= grey[(i - width)] && grey[(i+width)] >= grey[i])
 				{
-					grey[(index - width)] = grey[(index - width)]*0;
-					grey[index] = grey[index]*0;
+					grey[(i - width)] = grey[(i - width)]*0;
+					grey[i] = grey[i]*0;
 				}
 			}
 	
 		}
 		if (output[i].a == 135)
 		{
-			if (i < width | i > (height - 1) * width | !(index % width) | !((i + 1) % width))
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
 			{
 				//struct sobel s = {0, 0, 0, 0};
 				//output.push_back(s);
@@ -155,22 +158,22 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			}
 			else
 			{
-				if (grey[(index+1-width)] >= grey[index] && grey[(index+1-width)] >= grey[((index-1)+width)])
+				if (grey[(i+1-width)] >= grey[i] && grey[(i+1-width)] >= grey[((i-1)+width)])
 				{
-					grey[index] = grey[index]*0;
-					grey[((index-1)+width)] = grey[((index-1)+width)]*0;
+					grey[i] = grey[i]*0;
+					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
 				}
 				
-				if (grey[index] >= grey[(index+1-width)] && >= grey[index] >= grey[((index-1)+width)])
+				if (grey[i] >= grey[(i+1-width)] && grey[i] >= grey[((i-1)+width)])
 				{
-					grey[(index+1-width)] = grey[(index+1-width)]*0;
-					grey[((index-1)+width)] = grey[((index-1)+width)]*0;
+					grey[(i+1-width)] = grey[(i+1-width)]*0;
+					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
 				}
 				
-				if (grey[((index-1)+width)] >= grey[(index+1-width)] && grey[((index-1)+width)] >= grey[index])
+				if (grey[((i-1)+width)] >= grey[(i+1-width)] && grey[((i-1)+width)] >= grey[i])
 				{
-					grey[(index+1-width)] = grey[(index+1-width)]*0;
-					grey[index] = grey[index]*0;
+					grey[(i+1-width)] = grey[(i+1-width)]*0;
+					grey[i] = grey[i]*0;
 				}
 			}	
 		}
@@ -180,7 +183,7 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			if(grey[i] > HIGHTRESH) //boven treshold, i == index
 			{
 				grey[i] = grey[i];
-				
+				int k;
 				if(grey[i-1] >= LOWTRESH && grey[i-1] <= HIGHTRESH)
 				{
 					k = i-1;
@@ -211,7 +214,7 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 				}
 			}
 			
-			if(grey[i] = >= LOWTRESH && grey[i])
+			if(grey[i] >= LOWTRESH && grey[i])
 			{
 				grey[i] = grey[i] * -1;
 			}
