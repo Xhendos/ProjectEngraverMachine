@@ -25,7 +25,7 @@ class Imageprocessor
 
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
-		std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sobel> input, std::vector<unsigned char> grey);
+		std::vector<unsigned char> canny(std::vector<sobel> input, std::vector<unsigned char> grey);
         std::vector<sobel> sobelOperator(std::vector<unsigned char> grey);    
  
 };
