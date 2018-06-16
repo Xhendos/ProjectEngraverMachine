@@ -38,7 +38,10 @@ std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sob
 			input[i].a = 135;
 		}
 
-		output[i].a = input[i].a; //processed grads as output
+
+		struct sobel s = input.at(i);
+		output.push_back(s);
+
 
 		if (output[i].a == 0)
 		{
@@ -454,7 +457,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 	image.saveToFile("GREYpicture3.png");
 
 
-	//Imageprocessor::canny(sobels, edges);
+	Imageprocessor::canny(sobels, edges);
 
     return sobels;
 }
