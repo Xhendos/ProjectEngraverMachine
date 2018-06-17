@@ -6,7 +6,7 @@ echo 8 > /sys/class/gpio/export
 echo "out" > /sys/class/gpio/gpio7/direction
 echo "out" > /sys/class/gpio/gpio8/direction
 
-echo 0 > /sys/class/gpio/gpio8/value
+echo 1 > /sys/class/gpio/gpio8/value
 
 while true
 do

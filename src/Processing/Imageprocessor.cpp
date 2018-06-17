@@ -457,12 +457,99 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 	image.saveToFile("GREYpicture3.png");
 
 
-	Imageprocessor::canny(sobels, edges);
+	//Imageprocessor::canny(sobels, edges);
 
     return sobels;
 }
 
 
+
+std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vector<Imageprocessor::sobel> &pixels)
+{
+	std::vector<Imageprocessor::sobel> ret;
+
+
+	for(unsigned int index = 0; index < (width * height); index++)
+	{
+		if(index < width)                                                   /* Exception for the first row*/    
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(index > (height - 1) * width)                                    /* Exception for the last row */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(!(index % width))                                                /* Exception for the first column */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(!((index + 1) % width))                                          /* Exception for the last column */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+
+																			/* 0 degrees*/
+		if((pixels[index].a >= 337.5 || pixels[index].a < 22.5) || (pixels[index].a >= 157.5 && pixels[index].a < 202.5))
+		{																	/* If we found the strongest edge */
+			if(pixels[index].m >= pixels[index + 1].m && pixels[index].m >= pixels[index - 1].m)
+			{
+				pixels[index - 1].m = 0;
+				pixels[index + 1].m = 0;
+			}
+		}
+																			/* 45 degrees*/
+		if((pixels[index].m >= 22.5 && pixels[index].m < 67.5) || (pixels[index].m >= 202.5 && pixels[index].m < 247.5))
+		{																	/* If we found the strongest edge */
+			if(pixels[index].m >= pixels[(index - width) + 1].m && pixels[index].m >= pixels[(index + width) - 1].m)
+			{
+				pixels[(index - width) + 1].m = 0;
+				pixels[(index + width) - 1].m = 0;
+			}
+		}
+																			/* 90 degrees */
+		if((pixels[index].m >= 67.5 && pixels[index].m <= 112.5) || (pixels[index].m >= 247 && pixels[index].m < 292.5))
+		{																	/* If we found the strongest edge*/
+			if(pixels[index].m >= pixels[index - width].m && pixels[index].m >= pixels[index + width].m)
+			{
+				pixels[index - width].m = 0;
+				pixels[index + width].m = 0;
+			}
+		}
+
+
+	}
+
+    sf::Image image;
+    image.create(420, 594);
+    for(int y=0; y<594; y++){
+        for(int x=0; x<420; x++){
+            int index=(y*420 + x);
+            sf::Color c(pixels[index].m, pixels[index].m, pixels[index].m);
+            image.setPixel(x,y,c);
+        }
+    }
+
+	image.saveToFile("GREYimage4.png");
+
+
+	return ret;
+}
 
 /* https://stackoverflow.com/questions/35238047/how-do-i-interpret-the-orientation-of-the-gradient-when-using-imgradient-in-matl */
 /* https://stackoverflow.com/questions/19815732/what-is-gradient-orientation-and-gradient-magnitude */
