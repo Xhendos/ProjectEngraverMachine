@@ -7,8 +7,6 @@
 #include <iostream>
 #include <array>
 
-#include "Simulator.h"
-
 #define delay 1ms						// Delay tussen stappen 
 #define mmperrotationstepperx 1			// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery 1			// Aantal mm per volledige rotatie van de stapper van de y as
