@@ -7,6 +7,8 @@
 #include <iostream>
 #include <array>
 
+#include "Simulator.h"
+
 #define delay 1ms						// Delay tussen stappen 
 #define mmperrotationstepperx 1			// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery 1			// Aantal mm per volledige rotatie van de stapper van de y as
@@ -16,6 +18,7 @@
 #define mmperrotationstepper1 1			// Aantal mm per volledige rotatie van de stapper van rij 1 (simulator)
 #define mmperrotationstepper2 1			// Aantal mm per volledige rotatie van de stapper van rij 2 (simulator)
 
+void moveTo(int x, int y, bool laser);
 void findLine();
 void loadStart();
 void loadLine();
@@ -38,6 +41,7 @@ int positionrow2 = 0;					// plek van rij 2 (simulator)
 int pixels_used = 0;					// aantal zwarte pixels die ingebruik zijn (simulator)
 
 int map[420][594];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
+int currentvector[2] = { 0,0 };			// huidige locatie van de laser
 int startvector[2];						// begin punt van de lijn
 int endvector[2];						// eind punt van de lijn
 int instructions[2];					// aantal rotaties die de stepper zal moeten maken 
@@ -72,12 +76,19 @@ int main()
 	run(false);															// voert de instructies uit met de laser uit
 	loadLine();															// laad berekend de instructies voor de lijn en zet deze in de instructie set
 	run(true);															// voert de instructies uit met de laser aan
+	moveTo(300, 300, true);												// ga naar 300,300 met de laser aan
 
 	while (1) {
 																		// oneindige loop als alles klaar is zodat de simulator niet afsluit
 	}
 
 	return 0;
+}
+
+void moveTo(int x, int y, bool laser) {
+	instructions[0] = (x - currentvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het aangegeven punt te komen
+	instructions[1] = (y - currentvector[1]) / mmperrotationsteppery;	// berekend het aantal rotaties om naar het aangegeven punt te komen
+	run(laser);
 }
 
 void findLine() {														// zoek de lijn door:
@@ -108,11 +119,15 @@ void findLine() {														// zoek de lijn door:
 void loadStart() {
 	instructions[0] = startvector[0] / mmperrotationstepperx;			// berekend het aantal rotaties om naar het begin punt te komen
 	instructions[1] = startvector[1] / mmperrotationsteppery;			// berekend het aantal rotaties om naar het begin punt te komen
+	currentvector[0] = startvector[0];
+	currentvector[1] = startvector[1];
 }
 
 void loadLine() {
 	instructions[0] = (endvector[0] - startvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het eind punt te komen
 	instructions[1] = (endvector[1] - startvector[1]) / mmperrotationsteppery;	// berekend het aantal rotaties om naar het eind punt te komen
+	currentvector[0] = endvector[0];
+	currentvector[1] = endvector[1];
 }
 
 void run(bool laser) {									// zorgt dat de instructies worden uitgevoerd
