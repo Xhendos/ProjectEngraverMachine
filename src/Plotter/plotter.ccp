@@ -6,6 +6,8 @@
 #include <iostream>
 #include <array>
 
+#include "Gpio/Gpio.hpp"      
+      
 #define delay 1ms						// Delay tussen stappen 
 #define mmperrotationstepperx 1			// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery 1			// Aantal mm per volledige rotatie van de stapper van de y as
@@ -84,19 +86,23 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
 
 	if (stepsx < 0) {									// kijkt of de stappen negatief of posietief zijn
 		stepsx = stepsx * -1;							// negatieve stappen worden positief gemaakt
-		turnsidex = -1;									// de rotatie richting word naar links 
+		turnsidex = -1;									// de rotatie richting word naar links
+      		gpio::set_value(9,1);
 	}
 	else {
 		turnsidex = 1;									// de rotatie richting word naar rechts
-	}
+		gpio::set_value(9,0);
+      	}
 
 	if (stepsy < 0) {									// kijkt of de stappen negatief of posietief zijn
 		stepsy = stepsy * -1;							// negatieve stappen worden positief gemaakt
 		turnsidey = -1;									// de rotatie richting word naar boven 
-	}
+		gpio::set_value(8,1);
+        }
 	else {
 		turnsidey = 1;									// de rotatie richting word naar onder
-	}
+		gpio::set_value(8,0);
+        }
 
 	double slopex = stepsx / stepsy;					// berekend hoeveel stappen x in relatie tot y
 	double slopey = stepsy / stepsx;					// berekend hoeveel stappen y in relatie tot x
@@ -129,7 +135,8 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
 			slopeycount = slopeycount + slopey;
 		}
 		if (stepx) {											// als stepx true is moet stepper x 1 stap draaien
-			stepperxlocation = stepperxlocation + turnsidex;	// pas de locatie van de stepper aan 
+			gpio::set_value(11,1);
+      			stepperxlocation = stepperxlocation + turnsidex;	// pas de locatie van de stepper aan 
 			
 			if(stepperxlocation >= 9) {							// check voor als de stepper buiten het berijk van 0-8 gaat
 				stepperxlocation = 1;
@@ -139,9 +146,10 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
 			}
 
 			boolarrayx = getOutputstepper(stepperxlocation);    // stuur de nieuwe locatie naar getOutputstepper en ontvang de pin output waarden voor de stepper
-		}
+      		}
 		if (stepy) {											// als stepy true is moet stepper x 1 stap draaien
-			stepperylocation = stepperylocation + turnsidey;	// pas de locatie van de stepper aan 
+			gpio::set_value(7,1);
+      			stepperylocation = stepperylocation + turnsidey;	// pas de locatie van de stepper aan 
 
 			if (stepperylocation >= 9) {
 				stepperylocation = 1;							// check voor als de stepper buiten het berijk van 0-8 gaat
@@ -151,11 +159,13 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
 			}
 
 			boolarrayy = getOutputstepper(stepperylocation);	// stuur de nieuwe locatie naar getOutputstepper en ontvang de pin output waarden voor de stepper
-		}
+      		}
 		
 		setOutput(boolarrayx[0], boolarrayx[1], boolarrayx[2], boolarrayx[3], boolarrayy[0], boolarrayy[1], boolarrayy[2], boolarrayy[3], laser); // set the nieuwe pin output
 		sleep_for(delay);	// wacht x aantal ms zodat de stepper tijd heeft om te draaien 
-	}
+		gpio::set_value(11,0);
+      		gpio::set_value(7,0);
+      	}
 }
 
 std::array<bool, 4> Plotter::getOutputstepper(int nextStep) {	// Switch die een 4 bools returned aan de hand van de ingevoerde waarde
@@ -174,6 +184,6 @@ std::array<bool, 4> Plotter::getOutputstepper(int nextStep) {	// Switch die een 
 }
 
 void Plotter::setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9) {
-	// pin output
+	// 
 }
 
