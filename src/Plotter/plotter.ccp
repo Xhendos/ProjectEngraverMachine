@@ -35,9 +35,13 @@ Plotter::Plotter()
 }
 
 void Plotter::moveTo(int x, int y, bool laser) {
+	instructions[0] = 0;
+	instructions[1] = 0;
 	instructions[0] = (x - currentvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het aangegeven punt te komen
 	instructions[1] = (y - currentvector[1]) / mmperrotationsteppery;	// berekend het aantal rotaties om naar het aangegeven punt te komen
 	run(laser);
+	currentvector[0] = x;
+	currentvector[1] = y;
 } 
       
 void Plotter::findLine() {														// zoek de lijn door:
