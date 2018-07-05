@@ -91,21 +91,21 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
 	if (stepsx < 0) {									// kijkt of de stappen negatief of posietief zijn
 		stepsx = stepsx * -1;							// negatieve stappen worden positief gemaakt
 		turnsidex = -1;									// de rotatie richting word naar links
-      		gpio::set_value(9,0);
+      		gpio::set_value(9,1);
 	}
 	else {
 		turnsidex = 1;									// de rotatie richting word naar rechts
-		gpio::set_value(9,1);
+		gpio::set_value(9,0);
       	}
 
 	if (stepsy < 0) {									// kijkt of de stappen negatief of posietief zijn
 		stepsy = stepsy * -1;							// negatieve stappen worden positief gemaakt
 		turnsidey = -1;									// de rotatie richting word naar boven 
-		gpio::set_value(8,0);
+		gpio::set_value(8,1);
         }
 	else {
 		turnsidey = 1;									// de rotatie richting word naar onder
-		gpio::set_value(8,1);
+		gpio::set_value(8,0);
         }
 
 	double slopex = stepsx / stepsy;					// berekend hoeveel stappen x in relatie tot y
