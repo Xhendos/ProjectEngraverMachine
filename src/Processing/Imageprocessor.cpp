@@ -471,9 +471,12 @@ int crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 {
 	int cn; //teller
 	
-	if ((sobel[index].magnitude)) //check voor witte ranged
-		cn++;
-
+	for(int i = index; i % width == 0; i++;)
+	{
+		if ((sobel[index].magnitude)) //check voor witte ranged
+			cn++;
+	}
+	
 	if (cn&1)
 		return true;
 
