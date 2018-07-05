@@ -273,10 +273,10 @@ std::vector<unsigned char> Imageprocessor::toGrey(void *start)
 
 
     sf::Image image;
-    image.create(420, 594);
-    for(int y=0; y<594; y++){
-        for(int x=0; x<420; x++){
-            int index=(y*420 + x);
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
             sf::Color c(grey[index], grey[index], grey[index]);
             image.setPixel(x,y,c);
         }
@@ -365,10 +365,10 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 	}
 
 	sf::Image image;
-  	image.create(420, 594);
-  	for(int y=0; y<594; y++){
-  		for(int x=0; x<420; x++){
-           	int index=(y*420 + x);
+  	image.create(width, height);
+  	for(int y=0; y<height; y++){
+  		for(int x=0; x<width; x++){
+           	int index=(y*width + x);
          	sf::Color c(blurred[index], blurred[index], blurred[index]);
           	image.setPixel(x,y,c);
         }
@@ -386,7 +386,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
     std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
 	std::vector<unsigned char> edges;
 
-    for(int index = 0; index < grey.size(); index++)                        
+    for(int index = 0; index < grey.size(); index++)
     {
         if(index < width)                                                   /* Exception for the first row*/    
         {
@@ -410,7 +410,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
             sobels.push_back(s);
 
             continue;
-        } 
+        }
 
         if(!((index + 1) % width))                                          /* Exception for the last column */
         {
@@ -423,11 +423,11 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
         struct sobel s;
         s.gx =  ((grey[index - 1] * -2) +                                   /* I(u-1, v)    */
                 (grey[index - width - 1] * -1) +                            /* I(u-1, v-1)  */
-                (grey[index + width - 1] * -1) +                            /* I(u-1, v+1)  */  
+                (grey[index + width - 1] * -1) +                            /* I(u-1, v+1)  */
                 (grey[index + 1] * 2) +                                     /* I(u+1, v)    */
                 (grey[index + width + 1]) +                                 /* I(u+1, v+1)  */
                 (grey[index - width + 1]));                                 /* I(u+1, v-1)  */
-        
+
         s.gy =  ((grey[index - width] * -2) +                               /* I(u, v-1)    */
                 (grey[index - width - 1] * -1) +                            /* I(u-1, v-1)  */
                 (grey[index - width + 1] * -1) +                            /* I(u+1, v-1)  */
@@ -437,18 +437,18 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
         s.m = sqrt(s.gx * s.gx + s.gy * s.gy);                              /* magnitude = square root(gradient_x^2 + gradient_y^2) */
 
-        s.a = atan2((double) s.gy, (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */       
+        s.a = atan2((double) s.gy, (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */
                                                                             /* degree = angle * 180 / PI */
         sobels.push_back(s);
     	edges.push_back(s.m);
 	}
 
-    
+
 	sf::Image image;
-  	image.create(420, 594);
-  	for(int y=0; y<594; y++){
-  		for(int x=0; x<420; x++){
-           	int index=(y*420 + x);
+  	image.create(width, height);
+  	for(int y=0; y<height; y++){
+  		for(int x=0; x<width; x++){
+           	int index=(y*width + x);
          	sf::Color c(sobels[index].m, sobels[index].m, sobels[index].m);
           	image.setPixel(x,y,c);
         }
@@ -464,41 +464,41 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
 
 
-std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vector<Imageprocessor::sobel> &pixels)
+std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vector<Imageprocessor::sobel> pixels)
 {
-	std::vector<Imageprocessor::sobel> ret;
+	std::vector<Imageprocessor::sobel> ret(width * height);
 
 
 	for(unsigned int index = 0; index < (width * height); index++)
 	{
 		if(index < width)                                                   /* Exception for the first row*/    
         {
-            struct sobel s = {0, 0, 0, 0};
-            ret.push_back(s);
+            struct sobel s = pixels.at(index);
+            ret.insert(ret.begin() + index, s);
 
             continue;
         }
 
         if(index > (height - 1) * width)                                    /* Exception for the last row */
         {
-            struct sobel s = {0, 0, 0, 0};
-            ret.push_back(s);
-
-            continue;
+        	struct sobel s = pixels.at(index);
+            ret.insert(ret.begin() + index, s);
+ 
+	       continue;
         }
 
         if(!(index % width))                                                /* Exception for the first column */
         {
-            struct sobel s = {0, 0, 0, 0};
-            ret.push_back(s);
+            struct sobel s = pixels.at(index);
+            ret.insert(ret.begin() + index, s);
 
             continue;
         }
 
         if(!((index + 1) % width))                                          /* Exception for the last column */
         {
-            struct sobel s = {0, 0, 0, 0};
-            ret.push_back(s);
+            struct sobel s = pixels.at(index);
+            ret.insert(ret.begin() + index, s);
 
             continue;
         }
@@ -509,37 +509,67 @@ std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vecto
 		{																	/* If we found the strongest edge */
 			if(pixels[index].m >= pixels[index + 1].m && pixels[index].m >= pixels[index - 1].m)
 			{
-				pixels[index - 1].m = 0;
-				pixels[index + 1].m = 0;
+				//pixels[index - 1].m = 0;
+				//pixels[index + 1].m = 0;
+				struct sobel s1 = pixels.at(index - 1);
+				s1.m = 0;
+
+				struct sobel s2 = pixels.at(index + 1);
+				s2.m = 0;
+
+				ret.insert(ret.begin() + index - 1, s1);
+				ret.insert(ret.begin() + index + 1, s2);
 			}
+			continue;
+
 		}
 																			/* 45 degrees*/
 		if((pixels[index].m >= 22.5 && pixels[index].m < 67.5) || (pixels[index].m >= 202.5 && pixels[index].m < 247.5))
 		{																	/* If we found the strongest edge */
 			if(pixels[index].m >= pixels[(index - width) + 1].m && pixels[index].m >= pixels[(index + width) - 1].m)
 			{
-				pixels[(index - width) + 1].m = 0;
-				pixels[(index + width) - 1].m = 0;
+				//pixels[(index - width) + 1].m = 0;
+				//pixels[(index + width) - 1].m = 0;
+
+				struct sobel s1 = pixels.at((index - width) + 1);
+				s1.m = 0;
+
+				struct sobel s2 = pixels.at((index + width) - 1);
+				s2.m = 0;
+
+				ret.insert(ret.begin() + ((index - width) + 1), s1);
+				ret.insert(ret.begin() + ((index + width) - 1), s2);
 			}
+			continue;
 		}
 																			/* 90 degrees */
 		if((pixels[index].m >= 67.5 && pixels[index].m <= 112.5) || (pixels[index].m >= 247 && pixels[index].m < 292.5))
 		{																	/* If we found the strongest edge*/
 			if(pixels[index].m >= pixels[index - width].m && pixels[index].m >= pixels[index + width].m)
 			{
-				pixels[index - width].m = 0;
-				pixels[index + width].m = 0;
+				//pixels[index - width].m = 0;
+				//pixels[index + width].m = 0;
+
+				struct sobel s1 = pixels.at(index - width);
+				s1.m = 0;
+
+				struct sobel s2 = pixels.at(index + width);
+				s2.m = 0;
+
+				ret.insert(ret.begin() + (index - width), s1);
+				ret.insert(ret.begin() + (index + width), s2);
 			}
+			continue;
 		}
 
 
 	}
 
     sf::Image image;
-    image.create(420, 594);
-    for(int y=0; y<594; y++){
-        for(int x=0; x<420; x++){
-            int index=(y*420 + x);
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
             sf::Color c(pixels[index].m, pixels[index].m, pixels[index].m);
             image.setPixel(x,y,c);
         }
@@ -549,6 +579,73 @@ std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vecto
 
 
 	return ret;
+}
+
+
+std::vector<Imageprocessor::sobel> Imageprocessor::fillArea(std::vector<Imageprocessor::sobel> pixels)
+{
+	unsigned char first_edge = 0;
+	unsigned char second_edge = 0;
+
+	size_t x1 = 0;
+	size_t x2 = 0;
+
+	unsigned char y = 0;
+
+	for(size_t index = 0; index < (width * height); index++)
+	{
+		if(index / width != y)												/* If we jumped to a new line then reset all flags*/
+		{
+			first_edge = 0;
+			second_edge = 0;
+
+			y = index / width;
+			x1 = 0;
+
+			continue;
+		}
+
+
+		if(pixels[index].m > 4 && !first_edge && !second_edge)
+		{
+			first_edge = 1;
+
+			x1 = index;
+			y = index / width;
+			continue;
+		}
+
+		if(pixels[index].m > 4 && first_edge && !second_edge)
+		{
+			second_edge = 1;
+			continue;
+		}
+
+		if(pixels[index].m > 4 && first_edge && second_edge)
+		{
+			for(size_t i = x1; i <= index; i++)
+				pixels[i].m = 253;
+
+			first_edge = 0;
+			second_edge = 0;
+		}
+
+	}
+
+
+	sf::Image image;
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
+            sf::Color c(pixels[index].m, pixels[index].m, pixels[index].m);
+            image.setPixel(x,y,c);
+        }
+    }
+
+    image.saveToFile("GREYimage5.png");
+
+
 }
 
 /* https://stackoverflow.com/questions/35238047/how-do-i-interpret-the-orientation-of-the-gradient-when-using-imgradient-in-matl */

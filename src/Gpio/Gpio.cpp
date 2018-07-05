@@ -23,7 +23,6 @@ unsigned char gpio::export_gpio(unsigned char pin)
 {
 	FILE *fp = fopen(EXPORT, "w");
 
-	printf("%s\n", EXPORT);
 	if(fp == NULL)
 	{
 		perror("Cannot open " EXPORT);
@@ -251,13 +250,13 @@ std::string gpio::get_direction(unsigned char pin)
 	
 }
 
-unsigned char gpio::get_value(unsigned char pin)
+unsigned int gpio::get_value(unsigned char pin)
 {
 	char path[50];
-	char c;
-	
+	unsigned int i;
+
 	snprintf(path, 50, SYSFS"gpio%d/value", pin);
-	
+
 	FILE *fp = fopen(path, "r");
 
 	if(fp == NULL)
@@ -266,12 +265,17 @@ unsigned char gpio::get_value(unsigned char pin)
 		return 2;
 	}
 
-	if(fscanf(fp, "%c", c) == -1)
+	if(fscanf(fp, "%d", &i) == -1)
 	{
 		perror("[GPIO] [get_value] Cannot get value");
 		return 2;
 	}
-	
 
-	return c;
+	if(fclose(fp))
+	{
+		perror("[GPIO] [get_value] Cannot close file descriptor");
+		return 2;
+	}
+
+	return i;
 }

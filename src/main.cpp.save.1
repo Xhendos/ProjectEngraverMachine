@@ -1,0 +1,40 @@
+#include "Capture/Camera.hpp"
+#include "Gpio/Gpio.hpp"
+#include "Processing/Imageprocessor.hpp"
+
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	/* Export used I/O pins */
+	if(!gpio::export_gpio(2))								/* Green status LED */
+		exit(1);
+	if(!gpio::export_gpio(3))								/* Yellow status LED */
+		exit(1);
+
+
+
+	if(gpio::set_direction(2, DIR_OUT))
+		exit(1);
+	if(gpio::set_direction(3, DIR_OUT))
+		exit(1);
+
+
+	//if(gpio::set_value(3, 1))
+		exit(1);
+	if(gpio::set_value(3, 1))
+		exit(1);
+
+
+	Camera c("/dev/video0");								/* Make an Camera object (asume that the bcm2835-v4l2 module is loaded in the kernel)*/
+	void *sm = c.capture(800, 800);							/* Capture an 420 x 594 image (in RGB) and save the pointer to the shared memory */
+
+	Imageprocessor i(sm, 800, 800);							/* Make an Imageprocessor object */
+	std::vector<unsigned char> grey = i.toGrey(sm);			/* Convert the RGB24 to greyscale so our next operations will succeed */
+
+	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
+	std::vector<Imageprocessor::sobel> sbl = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
+	std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
+
+    return 0;
+}
