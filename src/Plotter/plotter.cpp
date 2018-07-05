@@ -6,19 +6,11 @@
 #include <iostream>
 #include <array>
 
-#include "Gpio/Gpio.hpp"      
+#include "../Gpio/Gpio.hpp" 
       
 #define delay 1ms						// Delay tussen stappen 
 #define mmperrotationstepperx 1			// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery 1			// Aantal mm per volledige rotatie van de stapper van de y as
-
-void moveTo(int x, int y, bool laser);
-void findLine();
-void loadStart();
-void loadLine();
-void run(bool laser);
-std::array<bool, 4> getOutputstepper(int nextStep);
-void setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9);
 
 int map[420][594];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
 int currentvector[2] = { 0,0 };			// huidige locatie van de laser

@@ -1,21 +1,23 @@
-
-<<<<<<< HEAD
 #include <stdio.h>
+
+#include "Gpio/Gpio.hpp"
+#include "Plotter/plotter.hpp"
 
 int main(int argc, char *argv[])
 {
-	Camera c("/dev/video0");								/* Make an Camera object (asume that the bcm2835-v4l2 module is loaded in the kernel)*/
-	void *sm = c.capture(420, 594);							/* Capture an 420 x 594 image (in RGB) and save the pointer to the shared memory */
+	gpio::export_gpio(11);
+	gpio::export_gpio(9);
+	gpio::export_gpio(8);
+	gpio::export_gpio(7);
 
-	Imageprocessor i(sm, 420, 594);							/* Make an Imageprocessor object */
-	std::vector<unsigned char> grey = i.toGrey(sm);			/* Convert the RGB24 to greyscale so our next operations will succeed */
+	gpio::set_direction(11, DIR_OUT);
+	gpio::set_direction(9, DIR_OUT);
+	gpio::set_direction(8, DIR_OUT);
+	gpio::set_direction(7, DIR_OUT);
 
-	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
-	std::vector<Imageprocessor::sobel> sbl = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
-	std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
 
+	Plotter p;
+	p.moveTo(50, 50, false);
 
     return 0;
 }
-=======
->>>>>>> 725270e3c585bf5ebbccd52c7ef850d1b17e5f7c

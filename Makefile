@@ -10,5 +10,8 @@ Camera.o: ./src/Capture/Camera.cpp ./src/Capture/Camera.hpp
 main.o: ./src/main.cpp
 	g++ -c ./src/main.cpp
 
-program: Imageprocessor.o Gpio.o Camera.o main.o
-	g++ -o program Imageprocessor.o Gpio.o Camera.o main.o -lsfml-graphics
+Plotter.o: ./src/Plotter/plotter.cpp ./src/Plotter/plotter.hpp
+	g++ -c ./src/Plotter/plotter.cpp
+
+program: Imageprocessor.o Gpio.o Camera.o main.o Plotter.o
+	g++ -o program Imageprocessor.o Gpio.o Camera.o Plotter.o main.o -lsfml-graphics

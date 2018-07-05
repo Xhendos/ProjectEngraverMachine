@@ -1,3 +1,5 @@
+#include <array>
+
 class Plotter
 {
 public:
