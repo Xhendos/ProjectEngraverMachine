@@ -1,13 +1,11 @@
 #include "Capture/Camera.hpp"
 #include "Gpio/Gpio.hpp"
 #include "Processing/Imageprocessor.hpp"
-
+#include <stdlib.h>
 #include <stdio.h>
-
-#include <arm-linux-gnueabihf/sys/reboot.h>
-#include <linux/reboot.h>
 int main(int argc, char *argv[])
 {
+int opp;
 	/* Export used I/O pins */
 	if(!gpio::export_gpio(3))								/* Green status LED */
 		exit(1);
@@ -61,6 +59,18 @@ int main(int argc, char *argv[])
 	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
 	std::vector<Imageprocessor::sobel> sbl = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
 	std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
+	
+	for(int i = 0; i <= sobel.size(); i++)
+	{
+		if (crossedge(i, sobel))
+		{
+			opp++;
+			printf("er is een punt gevonden binnen het polygoon. counter is %i.\n" , opp);
+		}
+	}
+
+	printf("\n Opp = %i\n", opp);
+	extent(opp, sobel);
 
     return 0;
 }

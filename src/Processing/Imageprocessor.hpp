@@ -28,6 +28,8 @@ class Imageprocessor
 		std::vector<unsigned char> canny(std::vector<sobel> input, std::vector<unsigned char> grey);
         std::vector<sobel> toSobel(std::vector<unsigned char> grey);    
  		std::vector<sobel> nonmax_suppression(std::vector<sobel> pixels);
-
+		void extent(int opp, std::vector<Imageprocessor::sobel> sobel);
+		int crossedge(int index, std::vector<Imageprocessor::sobel> sobel);
+		
 		std::vector<sobel> fillArea(std::vector<sobel> pixels);
 };

@@ -467,7 +467,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
 
 
-int Imageprocessor::crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
+int crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 {
 	int cn; //teller
 	

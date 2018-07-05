@@ -1,4 +1,4 @@
-int Imageprocessor::crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
+int crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 {
 	int cn; //teller
 	
@@ -51,7 +51,7 @@ void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 	if(prevhighestX == prevhighestY)
 	{
 		printf("Het is een vierkant.");
-	}
+	}	
 	else if(area >= 0.17 && area <= 0.58)
 	{
 		printf("Het is een driehoek.");
