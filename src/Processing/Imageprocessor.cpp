@@ -466,7 +466,6 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
 
 
-<<<<<<< HEAD
 
 int Imageprocessor::crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 {
@@ -484,6 +483,8 @@ int Imageprocessor::crossedge(int index, std::vector<Imageprocessor::sobel> sobe
 void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 {
 	int prevhighestX, currentX, prevhighestY, currentY;
+	
+	double area;
 
 	for(int index; index <= sobel.size(); index++)
 	{
@@ -515,8 +516,8 @@ void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 
 		}
 	}
-
-	double area = ((prevhighestX * prevhighestY)/opp);
+	
+	area = ((prevhighestX * prevhighestY)/opp);
 
 	if(prevhighestX == prevhighestY)
 	{
@@ -539,6 +540,7 @@ void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 		printf("Het is een rechthoek.");
 	}
 }
+/*
 int main()
 {	
 	int opp;
@@ -559,9 +561,8 @@ int main()
 
 	return 0;
 }
+*/
 
-
-=======
 std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vector<Imageprocessor::sobel> pixels)
 {
 	std::vector<Imageprocessor::sobel> ret(width * height);
@@ -745,7 +746,6 @@ std::vector<Imageprocessor::sobel> Imageprocessor::fillArea(std::vector<Imagepro
 
 
 }
->>>>>>> c579c7b468f91052fb7eb79910256480cf1cf799
 
 /* https://stackoverflow.com/questions/35238047/how-do-i-interpret-the-orientation-of-the-gradient-when-using-imgradient-in-matl */
 /* https://stackoverflow.com/questions/19815732/what-is-gradient-orientation-and-gradient-magnitude */
