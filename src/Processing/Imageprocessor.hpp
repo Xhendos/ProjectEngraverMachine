@@ -26,6 +26,8 @@ class Imageprocessor
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
 		std::vector<unsigned char> canny(std::vector<sobel> input, std::vector<unsigned char> grey);
-        std::vector<sobel> sobelOperator(std::vector<unsigned char> grey);    
- 
+        std::vector<sobel> toSobel(std::vector<unsigned char> grey);    
+ 		std::vector<sobel> nonmax_suppression(std::vector<sobel> pixels);
+
+		std::vector<sobel> fillArea(std::vector<sobel> pixels);
 };
