@@ -485,7 +485,7 @@ int crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 
 void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 {
-	int prevhighestX, currentX, prevhighestY, currentY;
+	int prevhighestX = 0, currentX = 0, prevhighestY = 0, currentY = 0;
 	
 	double area;
 
@@ -500,23 +500,23 @@ void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 			while(sobel[indX].magnitude != 0)
 			{
 				currentX++;
+				
+				while(sobel[(indX + (currentYfactor * width))].magnitude != 0)
+				{
+					currentY++;
+					currentYfactor++;
+				}
+				if(currentY > prevhighestY)
+				{
+					prevhighestY = currentY;
+				}
+				
 				indX++;
 			}
 			if(currentX > prevhighestX)
 			{
 				prevhighestX = currentX;
 			}
-
-			while(sobel[(indX + (currentYfactor * width))].magnitude != 0)
-			{
-				currentY++;
-				currentYfactor++;
-			}
-			if(currentY > prevhighestY)
-			{
-				prevhighestY = currentY;
-			}
-
 		}
 	}
 	
