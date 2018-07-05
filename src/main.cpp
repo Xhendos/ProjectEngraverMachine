@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "Gpio/Gpio.hpp"
-#include "Plotter/plotter.hpp"
+#include "Plotter/Plotter.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -16,8 +16,12 @@ int main(int argc, char *argv[])
 	gpio::set_direction(7, DIR_OUT);
 
 
-	Plotter p;
-	p.moveTo(50, 50, false);
+	plotter p;
+	p.moveTo(400, 200, false);
+	p.moveTo(600, 800, true);
+	p.moveTo(200, 800, true);
+	p.moveTo(400, 200, true);
+	p.moveTo(20, 20, false);
 
     return 0;
 }
