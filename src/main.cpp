@@ -1,7 +1,5 @@
-#include "Capture/Camera.hpp"
-#include "Gpio/Gpio.hpp"
-#include "Processing/Imageprocessor.hpp"
 
+<<<<<<< HEAD
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -19,3 +17,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+=======
+>>>>>>> 725270e3c585bf5ebbccd52c7ef850d1b17e5f7c
