@@ -64,6 +64,17 @@ int main(int argc, char *argv[])
 
 	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
 	std::vector<Imageprocessor::sobel> sbl = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
+
+
+	int array[800][800];
+
+	for(int i = 0; i < 800; i++)
+	{
+		for(int j = 0; j < 800; j++)
+		{
+			array[i][j] = sbl[(j * 800) + i].m;
+		}
+	}
 	//std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
 /*
 	for(int index = 0; index <= sbl.size(); index++)
