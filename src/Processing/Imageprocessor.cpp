@@ -8,7 +8,7 @@
 #define HIGHTRESH 200
 #define LOWTRESH HIGHTRESH/2
 
-enum boolean {false, true};
+enum _boolean {falsee, truee};
 
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
@@ -467,41 +467,42 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
 
 
-int crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
+int Imageprocessor::crossedge(int index, std::vector<Imageprocessor::sobel> sobel)
 {
 	int cn; //teller
 	
-	for(int i = index; i % width == 0; i++;)
+	for(int i = index; i % width == 0; i++)
 	{
-		if ((sobel[index].magnitude)) //check voor witte ranged
+		if ((sobel[index].m)) //check voor witte ranged
 			cn++;
 	}
 	
-	if (cn&1)
-		return true;
+	if (cn & 1)
+		return 1;
 
-	return false;
+	return 0;
 }
 
-void extent(int opp, std::vector<Imageprocessor::sobel> sobel)
+void Imageprocessor::extent(int opp, std::vector<Imageprocessor::sobel> sobel)
 {
 	int prevhighestX = 0, currentX = 0, prevhighestY = 0, currentY = 0;
 	
 	double area;
+	int currentYfactor = 0;
 
 	for(int index; index <= sobel.size(); index++)
 	{
-		if(sobel[index].magnitude == 0)
+		if(sobel[index].m == 0)
 		{
 			index++;
 
 			int indX = index;
 
-			while(sobel[indX].magnitude != 0)
+			while(sobel[indX].m != 0)
 			{
 				currentX++;
 				
-				while(sobel[(indX + (currentYfactor * width))].magnitude != 0)
+				while(sobel[(indX + (currentYfactor * width))].m != 0)
 				{
 					currentY++;
 					currentYfactor++;
@@ -585,7 +586,7 @@ std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vecto
         {
         	struct sobel s = pixels.at(index);
             ret.insert(ret.begin() + index, s);
- 
+
 	       continue;
         }
 

@@ -3,9 +3,15 @@
 #include "Processing/Imageprocessor.hpp"
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <linux/reboot.h>
+#include <sys/reboot.h>
+#include <unistd.h>
+
 int main(int argc, char *argv[])
 {
-int opp;
+	int opp = 500;
+
 	/* Export used I/O pins */
 	if(!gpio::export_gpio(3))								/* Green status LED */
 		exit(1);
@@ -44,11 +50,11 @@ int opp;
 		exit(1);
 
 
-	while(1)
-	{
-		if(gpio::get_value(14)) reboot(LINUX_REBOOT_CMD_HALT);
+//	while(1)
+//	{
 //		if(gpio::get_value(14)) reboot(LINUX_REBOOT_CMD_HALT);
-	}
+//		if(gpio::get_value(14)) reboot(LINUX_REBOOT_CMD_HALT);
+//	}
 
 	Camera c("/dev/video0");								/* Make an Camera object (asume that the bcm2835-v4l2 module is loaded in the kernel)*/
 	void *sm = c.capture(800, 800);							/* Capture an 420 x 594 image (in RGB) and save the pointer to the shared memory */
@@ -58,19 +64,19 @@ int opp;
 
 	std::vector<unsigned char> blur = i.blur(grey);			/* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
 	std::vector<Imageprocessor::sobel> sbl = i.toSobel(blur);	/* Do the sobel operator to do the first edge detection */
-	std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
-	
-	for(int i = 0; i <= sobel.size(); i++)
+	//std::vector<Imageprocessor::sobel> nms = i.nonmax_suppression(sbl);
+/*
+	for(int index = 0; index <= sbl.size(); index++)
 	{
-		if (crossedge(i, sobel))
+		if (i.crossedge(index, sbl))
 		{
 			opp++;
 			printf("er is een punt gevonden binnen het polygoon. counter is %i.\n" , opp);
 		}
 	}
-
+*/
 	printf("\n Opp = %i\n", opp);
-	extent(opp, sobel);
+	i.extent(opp, sbl);
 
     return 0;
 }
