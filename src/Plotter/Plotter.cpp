@@ -13,7 +13,7 @@
 #define mmperrotationstepperx (800/211)	// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery (1030/267)	// Aantal mm per volledige rotatie van de stapper van de y as
 
-int map[420][594];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
+int map[800][800];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
 int currentvector[2] = { 0,0 };			// huidige locatie van de laser
 double startvector[2];						// begin punt van de lijn
 double endvector[2];						// eind punt van de lijn
