@@ -22,10 +22,11 @@ class Imageprocessor
         };
     	
         Imageprocessor(void *sm, unsigned int w, unsigned int h);
+		void *crop(void *pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right);
 
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);
-		std::vector<unsigned char> canny(std::vector<sobel> input, std::vector<unsigned char> grey);
+
         std::vector<sobel> toSobel(std::vector<unsigned char> grey);    
  		std::vector<sobel> nonmax_suppression(std::vector<sobel> &pixels);
 };

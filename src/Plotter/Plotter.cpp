@@ -22,12 +22,12 @@ int stepperxlocation = 1;				// huidige positie van stepper 1
 int stepperylocation = 1;				// huidige positie van stepper 2
 
 
-plotter::plotter()
+Plotter::Plotter()
 {
 	setOutput(true,false,false,false,true,false,false,false,false);		// eerste uitput zodat de steppers allemaal goed staan
 }
 
-void plotter::moveTo(int x, int y, bool laser) {
+void Plotter::moveTo(int x, int y, bool laser) {
 	instructions[0] = 0;
 	instructions[1] = 0;
 	instructions[0] = (x - currentvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het aangegeven punt te komen
@@ -37,7 +37,7 @@ void plotter::moveTo(int x, int y, bool laser) {
 	currentvector[1] = y;
 } 
       
-void plotter::findLine() {														// zoek de lijn door:
+void Plotter::findLine() {														// zoek de lijn door:
 	int i, j;
 	bool stop = false;
 	for (i = 0; i < 594 && stop == false; i++) {					    // alle pixels van links naar rechts
@@ -62,17 +62,17 @@ void plotter::findLine() {														// zoek de lijn door:
 
 }
 
-void plotter::loadStart() {
+void Plotter::loadStart() {
 	instructions[0] = startvector[0] / mmperrotationstepperx;			// berekend het aantal rotaties om naar het begin punt te komen
 	instructions[1] = startvector[1] / mmperrotationsteppery;			// berekend het aantal rotaties om naar het begin punt te komen
 }
 
-void plotter::loadLine() {
+void Plotter::loadLine() {
 	instructions[0] = (endvector[0] - startvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het eind punt te komen
 	instructions[1] = (endvector[1] - startvector[1]) / mmperrotationsteppery;	// berekend het aantal rotaties om naar het eind punt te komen
 }
 
-void plotter::run(bool laser) {									// zorgt dat de instructies worden uitgevoerd
+void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitgevoerd
 	using namespace std::this_thread;					
 	using namespace std::chrono; 
 
@@ -165,7 +165,7 @@ void plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
       	}
 }
 
-std::array<bool, 4> plotter::getOutputstepper(int nextStep) {	// Switch die een 4 bools returned aan de hand van de ingevoerde waarde
+std::array<bool, 4> Plotter::getOutputstepper(int nextStep) {	// Switch die een 4 bools returned aan de hand van de ingevoerde waarde
 	std::array<bool, 4> boolarray;
 	switch (nextStep) {
 	case 1: boolarray[0] = true; boolarray[1] = false; boolarray[2] = false; boolarray[3] = false; break;
@@ -180,7 +180,7 @@ std::array<bool, 4> plotter::getOutputstepper(int nextStep) {	// Switch die een 
 		return boolarray;
 }
 
-void plotter::setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9) {
+void Plotter::setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9) {
 	// 
 }
 

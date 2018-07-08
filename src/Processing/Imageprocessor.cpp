@@ -15,241 +15,38 @@ Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 	height = h;
 }
 
-std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sobel> input, std::vector<unsigned char> grey)
+void *Imageprocessor::crop(void *pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right)
 {
-	std::vector<Imageprocessor::sobel> output;
+	void *ret = malloc((x_right - x_left) * (y_right - y_left));
+	int x, y, counter = 0;
 
-	for(int i = 0; i < grey.size(); i++)		//making the angle region a specific angle.
-	{	
-		if (input[i].a >= 157.5 && input[i].a <= 180 | input[i].a >= 0 && input[i].a <= 22.4)
-		{
-			input[i].a = 0;
-		}
-		if (input[i].a >= 22.5 && input[i].a <= 67.4)
-		{
-			input[i].a = 45;
-		}
-		if (input[i].a >= 67.5 && input[i].a <= 112.4)
-		{
-			input[i].a = 90;
-		}
-		if (input[i].a >= 112.5 && input[i].a <= 157.4)
-		{
-			input[i].a = 135;
-		}
+	for(unsigned int index = 0; index < (width * height); index++)
+	{
+		x = index % width;
+		y = index / width;
 
-
-		struct sobel s = input.at(i);
-		output.push_back(s);
-
-
-		if (output[i].a == 0)
+		if((x >= x_left && x <= x_right) && (y >= y_left && y <= y_right))
 		{
-			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width)) //if the targetted pixel is on the edge... (applies to all grad options) weet niet of dit nodig is.
-			{
-				//struct sobel s = {0, 0, 0, 0};
-				//output.push_back(s);
-				continue;
-			}
-			else
-			{
-				/* https://www.youtube.com/watch?v=KR_zsIKpX28
-				1 2 3
-				4 5 6
-				7 8 9				 
-				
-				grey[((i-1)-width)] 								//1
-				grey[(i - width)] 									//2
-				grey[(i+1-width)] 									//3
-				grey[(i-1)]											//4
-				grey[i]												//5
-				grey[(i+1)]											//6
-				grey[((i-1)+width)]									//7
-				grey[(i+width)] 									//8
-				grey[((i+1)+width)]									//9
-				
-				*/
-				//0 degrees == horizonal filtering to check the vertical lines
-				
-				if (grey[(i-1)] >= grey[(i)] && grey[(i-1)] >= grey[(i+1)])
-				{
-					grey[(i+1)] = grey[(i+1)] * 0;
-					grey[(i)] = grey[(i)] * 0;
-				}
-				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
-				{
-					grey[(i+1)] = grey[(i+1)] * 0;
-					grey[(i-1)] = grey[(i-1)] * 0;
-				}
-				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
-				{
-					grey[(i)] = grey[(i+1)] * 0;
-					grey[(i-1)] = grey[(i-1)] * 0;
-				}
-			}
-		}	
-
-		if (output[i].a == 45)
-		{
-			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
-			{
-				//struct sobel s = {0, 0, 0, 0};
-				//output.push_back(s);
-				continue;
-			}
-			else
-			{
-				//grey[((i-1)-width)]
-				//grey[i]
-				//grey[((i+1)+width)]//9
-				
-				if (grey[((i+1)+width)] >= grey[(i)] && grey[((i+1)+width)] >= grey[((i-1)-width)])
-				{
-					grey[(i+1)] = grey[(i+1)] * 0;
-					grey[(i)] = grey[(i)] * 0;
-				}
-				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
-				{
-					grey[(i+1)] = grey[(i+1)] * 0;
-					grey[(i-1)] = grey[(i-1)] * 0;
-				}
-				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
-				{
-					grey[(i)] = grey[(i+1)] * 0;
-					grey[(i-1)] = grey[(i-1)] * 0;
-				}
-			}
-	
-		}
-		if (output[i].a == 90)
-		{
-			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
-			{
-				//struct sobel s = {0, 0, 0, 0};
-				//output.push_back(s);
-				continue;
-			}
-			else
-			{
-				if (grey[(i - width)] >= grey[i] && grey[(i - width)] >= grey[(i+width)])
-				{
-					grey[i] = grey[i]*0;
-					grey[(i+width)] = grey[(i+width)]*0;
-				}
-				
-				if (grey[i] >= grey[(i - width)] && grey[(i)] >= grey[(i+width)])
-				{
-					grey[(i+width)] = grey[(i+width)]*0;
-					grey[(i - width)] = grey[(i - width)]*0;
-				}
-				
-				if (grey[(i+width)] >= grey[(i - width)] && grey[(i+width)] >= grey[i])
-				{
-					grey[(i - width)] = grey[(i - width)]*0;
-					grey[i] = grey[i]*0;
-				}
-			}
-	
-		}
-		if (output[i].a == 135)
-		{
-			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
-			{
-				//struct sobel s = {0, 0, 0, 0};
-				//output.push_back(s);
-				continue;
-			}
-			else
-			{
-				if (grey[(i+1-width)] >= grey[i] && grey[(i+1-width)] >= grey[((i-1)+width)])
-				{
-					grey[i] = grey[i]*0;
-					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
-				}
-				
-				if (grey[i] >= grey[(i+1-width)] && grey[i] >= grey[((i-1)+width)])
-				{
-					grey[(i+1-width)] = grey[(i+1-width)]*0;
-					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
-				}
-				
-				if (grey[((i-1)+width)] >= grey[(i+1-width)] && grey[((i-1)+width)] >= grey[i])
-				{
-					grey[(i+1-width)] = grey[(i+1-width)]*0;
-					grey[i] = grey[i]*0;
-				}
-			}	
-		}
-		
-		for(int i = 0; i <= grey.size(); i++)
-		{
-			if(grey[i] > HIGHTRESH) //boven treshold, i == index
-			{
-				grey[i] = grey[i];
-				int k;
-				if(grey[i-1] >= LOWTRESH && grey[i-1] <= HIGHTRESH)
-				{
-					k = i-1;
-					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
-					{
-						grey[k] = grey[k] * -1;
-						if(k == 0)
-						{
-							break;
-						}
-						k--;
-					}
-				}
-				
-				if(grey[i+1] >= LOWTRESH && grey[i+1] <= HIGHTRESH)
-				{
-					k = i+1;
-					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
-					{
-						grey[k] = grey[k];
-						if(k == grey.size())
-						{
-							break;
-						}
-						k++;
-					}
-					i=k; //verdergaan vanaf de plek waar die gestopt is.
-				}
-			}
-			
-			if(grey[i] >= LOWTRESH && grey[i])
-			{
-				grey[i] = grey[i] * -1;
-			}
-			
-			if(grey[i] < LOWTRESH)
-			{
-				grey[i] = 0;
-			}
-		}
-		
-		for(int i = 0; i <= grey.size(); i++)
-		{
-		if(grey[i] < 0)
-			{
-				grey[i] = 0;
-			}
+			*((char *) ret + counter) = *((char *) pixels + index);
+			counter++;
 		}
 	}
 
-    sf::Image image;
-    image.create(420, 594);
-    for(int y=0; y<594; y++){
-        for(int x=0; x<420; x++){
-            int index=(y*420 + x);
-            sf::Color c(grey[index], grey[index], grey[index]);
+	sf::Image image;
+    image.create((x_right - x_left), (y_right - y_left));
+    for(int y=0; y<(y_right - y_left); y++){
+        for(int x=0; x<(x_right - x_left); x++){
+            int index=(y*(x_right - x_left) + x);
+            sf::Color c(*((char *) ret + index), *((char *) ret + index), *((char *)ret + index));
             image.setPixel(x,y,c);
         }
     }
 
-	image.saveToFile("GREYpicture4.png");
+    image.saveToFile("GREYpicture6.png");
 
-	return grey;
+
+
+	return ret;
 }
 
 
@@ -273,10 +70,10 @@ std::vector<unsigned char> Imageprocessor::toGrey(void *start)
 
 
     sf::Image image;
-    image.create(420, 594);
-    for(int y=0; y<594; y++){
-        for(int x=0; x<420; x++){
-            int index=(y*420 + x);
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
             sf::Color c(grey[index], grey[index], grey[index]);
             image.setPixel(x,y,c);
         }
@@ -364,15 +161,16 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 
 	}
 
-	sf::Image image;
-  	image.create(420, 594);
-  	for(int y=0; y<594; y++){
-  		for(int x=0; x<420; x++){
-           	int index=(y*420 + x);
-         	sf::Color c(blurred[index], blurred[index], blurred[index]);
-          	image.setPixel(x,y,c);
+    sf::Image image;
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
+            sf::Color c(grey[index], grey[index], grey[index]);
+            image.setPixel(x,y,c);
         }
-  	}
+    }
+
 
 	image.saveToFile("GREYpicture2.png");
 
@@ -445,10 +243,10 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
 
     
 	sf::Image image;
-  	image.create(420, 594);
-  	for(int y=0; y<594; y++){
-  		for(int x=0; x<420; x++){
-           	int index=(y*420 + x);
+  	image.create(width, height);
+  	for(int y=0; y<height; y++){
+  		for(int x=0; x<width; x++){
+           	int index=(y*width + x);
          	sf::Color c(sobels[index].m, sobels[index].m, sobels[index].m);
           	image.setPixel(x,y,c);
         }
@@ -536,10 +334,10 @@ std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vecto
 	}
 
     sf::Image image;
-    image.create(420, 594);
-    for(int y=0; y<594; y++){
-        for(int x=0; x<420; x++){
-            int index=(y*420 + x);
+    image.create(width, height);
+    for(int y=0; y<height; y++){
+        for(int x=0; x<width; x++){
+            int index=(y*width + x);
             sf::Color c(pixels[index].m, pixels[index].m, pixels[index].m);
             image.setPixel(x,y,c);
         }

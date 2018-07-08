@@ -7,7 +7,7 @@
 
 #include <sys/ioctl.h>
 #include <stdio.h>
-
+#include <unistd.h>													/* close() */
 #include <vector>
 
 #include <sys/mman.h>												/* mmap() */
