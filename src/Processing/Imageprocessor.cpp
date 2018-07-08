@@ -5,6 +5,9 @@
 
 #include <math.h>                                                           /* sqrt(), M_PI, atan2() */
 
+#define HIGHTRESH 200
+#define LOWTRESH HIGHTRESH/2
+
 Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 {
 	shared_mem = sm;
@@ -12,6 +15,242 @@ Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 	height = h;
 }
 
+std::vector<unsigned char> Imageprocessor::canny(std::vector<Imageprocessor::sobel> input, std::vector<unsigned char> grey)
+{
+	std::vector<Imageprocessor::sobel> output;
+
+	for(int i = 0; i < grey.size(); i++)		//making the angle region a specific angle.
+	{	
+		if (input[i].a >= 157.5 && input[i].a <= 180 | input[i].a >= 0 && input[i].a <= 22.4)
+		{
+			input[i].a = 0;
+		}
+		if (input[i].a >= 22.5 && input[i].a <= 67.4)
+		{
+			input[i].a = 45;
+		}
+		if (input[i].a >= 67.5 && input[i].a <= 112.4)
+		{
+			input[i].a = 90;
+		}
+		if (input[i].a >= 112.5 && input[i].a <= 157.4)
+		{
+			input[i].a = 135;
+		}
+
+
+		struct sobel s = input.at(i);
+		output.push_back(s);
+
+
+		if (output[i].a == 0)
+		{
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width)) //if the targetted pixel is on the edge... (applies to all grad options) weet niet of dit nodig is.
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				/* https://www.youtube.com/watch?v=KR_zsIKpX28
+				1 2 3
+				4 5 6
+				7 8 9				 
+				
+				grey[((i-1)-width)] 								//1
+				grey[(i - width)] 									//2
+				grey[(i+1-width)] 									//3
+				grey[(i-1)]											//4
+				grey[i]												//5
+				grey[(i+1)]											//6
+				grey[((i-1)+width)]									//7
+				grey[(i+width)] 									//8
+				grey[((i+1)+width)]									//9
+				
+				*/
+				//0 degrees == horizonal filtering to check the vertical lines
+				
+				if (grey[(i-1)] >= grey[(i)] && grey[(i-1)] >= grey[(i+1)])
+				{
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i)] = grey[(i)] * 0;
+				}
+				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
+				{
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
+				}
+				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
+				{
+					grey[(i)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
+				}
+			}
+		}	
+
+		if (output[i].a == 45)
+		{
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				//grey[((i-1)-width)]
+				//grey[i]
+				//grey[((i+1)+width)]//9
+				
+				if (grey[((i+1)+width)] >= grey[(i)] && grey[((i+1)+width)] >= grey[((i-1)-width)])
+				{
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i)] = grey[(i)] * 0;
+				}
+				if (grey[(i)] >= grey[(i-1)] && grey[(i)] >= grey[(i+1)])
+				{
+					grey[(i+1)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
+				}
+				if (grey[(i+1)] >= grey[(i)] && grey[(i+1)] >= grey[(i-1)])
+				{
+					grey[(i)] = grey[(i+1)] * 0;
+					grey[(i-1)] = grey[(i-1)] * 0;
+				}
+			}
+	
+		}
+		if (output[i].a == 90)
+		{
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				if (grey[(i - width)] >= grey[i] && grey[(i - width)] >= grey[(i+width)])
+				{
+					grey[i] = grey[i]*0;
+					grey[(i+width)] = grey[(i+width)]*0;
+				}
+				
+				if (grey[i] >= grey[(i - width)] && grey[(i)] >= grey[(i+width)])
+				{
+					grey[(i+width)] = grey[(i+width)]*0;
+					grey[(i - width)] = grey[(i - width)]*0;
+				}
+				
+				if (grey[(i+width)] >= grey[(i - width)] && grey[(i+width)] >= grey[i])
+				{
+					grey[(i - width)] = grey[(i - width)]*0;
+					grey[i] = grey[i]*0;
+				}
+			}
+	
+		}
+		if (output[i].a == 135)
+		{
+			if (i < width | i > (height - 1) * width | !(i % width) | !((i + 1) % width))
+			{
+				//struct sobel s = {0, 0, 0, 0};
+				//output.push_back(s);
+				continue;
+			}
+			else
+			{
+				if (grey[(i+1-width)] >= grey[i] && grey[(i+1-width)] >= grey[((i-1)+width)])
+				{
+					grey[i] = grey[i]*0;
+					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
+				}
+				
+				if (grey[i] >= grey[(i+1-width)] && grey[i] >= grey[((i-1)+width)])
+				{
+					grey[(i+1-width)] = grey[(i+1-width)]*0;
+					grey[((i-1)+width)] = grey[((i-1)+width)]*0;
+				}
+				
+				if (grey[((i-1)+width)] >= grey[(i+1-width)] && grey[((i-1)+width)] >= grey[i])
+				{
+					grey[(i+1-width)] = grey[(i+1-width)]*0;
+					grey[i] = grey[i]*0;
+				}
+			}	
+		}
+		
+		for(int i = 0; i <= grey.size(); i++)
+		{
+			if(grey[i] > HIGHTRESH) //boven treshold, i == index
+			{
+				grey[i] = grey[i];
+				int k;
+				if(grey[i-1] >= LOWTRESH && grey[i-1] <= HIGHTRESH)
+				{
+					k = i-1;
+					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
+					{
+						grey[k] = grey[k] * -1;
+						if(k == 0)
+						{
+							break;
+						}
+						k--;
+					}
+				}
+				
+				if(grey[i+1] >= LOWTRESH && grey[i+1] <= HIGHTRESH)
+				{
+					k = i+1;
+					while(grey[k] > LOWTRESH) //keur alle vastzittende waardes goed die boven de lowertreshold komen
+					{
+						grey[k] = grey[k];
+						if(k == grey.size())
+						{
+							break;
+						}
+						k++;
+					}
+					i=k; //verdergaan vanaf de plek waar die gestopt is.
+				}
+			}
+			
+			if(grey[i] >= LOWTRESH && grey[i])
+			{
+				grey[i] = grey[i] * -1;
+			}
+			
+			if(grey[i] < LOWTRESH)
+			{
+				grey[i] = 0;
+			}
+		}
+		
+		for(int i = 0; i <= grey.size(); i++)
+		{
+		if(grey[i] < 0)
+			{
+				grey[i] = 0;
+			}
+		}
+	}
+
+    sf::Image image;
+    image.create(420, 594);
+    for(int y=0; y<594; y++){
+        for(int x=0; x<420; x++){
+            int index=(y*420 + x);
+            sf::Color c(grey[index], grey[index], grey[index]);
+            image.setPixel(x,y,c);
+        }
+    }
+
+	image.saveToFile("GREYpicture4.png");
+
+	return grey;
+}
 
 
 std::vector<unsigned char> Imageprocessor::toGrey(void *start)
@@ -31,6 +270,7 @@ std::vector<unsigned char> Imageprocessor::toGrey(void *start)
 
 		grey.push_back(((r + g + b) / 3));									/* Push the average of the rgb to the vector (average is greyscale) */
 	}
+
 
     sf::Image image;
     image.create(420, 594);
@@ -144,6 +384,7 @@ std::vector<unsigned char> Imageprocessor::blur(std::vector<unsigned char> grey)
 std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned char> grey)
 {
     std::vector<Imageprocessor::sobel> sobels;                              /* Vector to hold all sobel data structures for the new image */
+	std::vector<unsigned char> edges;
 
     for(int index = 0; index < grey.size(); index++)                        
     {
@@ -199,7 +440,8 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
         s.a = atan2((double) s.gy, (double) s.gx) * 180.0 / M_PI;           /* angle = tan^(-1) (gradient_y / gradient_x) */       
                                                                             /* degree = angle * 180 / PI */
         sobels.push_back(s);
-    }
+    	edges.push_back(s.m);
+	}
 
     
 	sf::Image image;
@@ -213,10 +455,101 @@ std::vector<Imageprocessor::sobel> Imageprocessor::toSobel(std::vector<unsigned 
   	}
 
 	image.saveToFile("GREYpicture3.png");
+
+
+	//Imageprocessor::canny(sobels, edges);
+
     return sobels;
 }
 
 
+
+std::vector<Imageprocessor::sobel> Imageprocessor::nonmax_suppression(std::vector<Imageprocessor::sobel> &pixels)
+{
+	std::vector<Imageprocessor::sobel> ret;
+
+
+	for(unsigned int index = 0; index < (width * height); index++)
+	{
+		if(index < width)                                                   /* Exception for the first row*/    
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(index > (height - 1) * width)                                    /* Exception for the last row */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(!(index % width))                                                /* Exception for the first column */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+        if(!((index + 1) % width))                                          /* Exception for the last column */
+        {
+            struct sobel s = {0, 0, 0, 0};
+            ret.push_back(s);
+
+            continue;
+        }
+
+
+																			/* 0 degrees*/
+		if((pixels[index].a >= 337.5 || pixels[index].a < 22.5) || (pixels[index].a >= 157.5 && pixels[index].a < 202.5))
+		{																	/* If we found the strongest edge */
+			if(pixels[index].m >= pixels[index + 1].m && pixels[index].m >= pixels[index - 1].m)
+			{
+				pixels[index - 1].m = 0;
+				pixels[index + 1].m = 0;
+			}
+		}
+																			/* 45 degrees*/
+		if((pixels[index].m >= 22.5 && pixels[index].m < 67.5) || (pixels[index].m >= 202.5 && pixels[index].m < 247.5))
+		{																	/* If we found the strongest edge */
+			if(pixels[index].m >= pixels[(index - width) + 1].m && pixels[index].m >= pixels[(index + width) - 1].m)
+			{
+				pixels[(index - width) + 1].m = 0;
+				pixels[(index + width) - 1].m = 0;
+			}
+		}
+																			/* 90 degrees */
+		if((pixels[index].m >= 67.5 && pixels[index].m <= 112.5) || (pixels[index].m >= 247 && pixels[index].m < 292.5))
+		{																	/* If we found the strongest edge*/
+			if(pixels[index].m >= pixels[index - width].m && pixels[index].m >= pixels[index + width].m)
+			{
+				pixels[index - width].m = 0;
+				pixels[index + width].m = 0;
+			}
+		}
+
+
+	}
+
+    sf::Image image;
+    image.create(420, 594);
+    for(int y=0; y<594; y++){
+        for(int x=0; x<420; x++){
+            int index=(y*420 + x);
+            sf::Color c(pixels[index].m, pixels[index].m, pixels[index].m);
+            image.setPixel(x,y,c);
+        }
+    }
+
+	image.saveToFile("GREYimage4.png");
+
+
+	return ret;
+}
 
 /* https://stackoverflow.com/questions/35238047/how-do-i-interpret-the-orientation-of-the-gradient-when-using-imgradient-in-matl */
 /* https://stackoverflow.com/questions/19815732/what-is-gradient-orientation-and-gradient-magnitude */

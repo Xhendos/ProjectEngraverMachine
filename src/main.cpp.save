@@ -8,6 +8,7 @@
 #include "Processing/Imageprocessor.hpp"
 #include "Capture/Camera.hpp"
 
+
 int main(int argc, char *argv[])
 {
 	if(gpio::export_gpio(14) != 14)
