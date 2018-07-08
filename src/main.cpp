@@ -10,10 +10,51 @@
 
 int main(int argc, char *argv[])
 {
-	if(gpio::export_gpio(14) != 14)
+	printf("[ENGRAVER] Setting up all I/O pins\n");
+
+	if(gpio::export_gpio(7) != 7)							/* Step  motor x*/
 		return 1;
 
-	if(gpio::export_gpio(15) != 15)
+	if(gpio::export_gpio(8) != 8)							/* Direction motor x */
+		return 1;
+
+	if(gpio::export_gpio(11) != 11)							/* Step motor y */
+		return 1;
+
+	if(gpio::export_gpio(9) != 9)							/* Direction motor y */
+		return 1;
+
+	if(gpio::export_gpio(4) != 4)							/* Yellow LED */
+		return 1;
+
+	if(gpio::export_gpio(17) != 17)							/* Green LED */
+		return 1;
+
+	if(gpio::export_gpio(14) != 14)							/* Red button (shutdown) */
+		return 1;
+
+	if(gpio::export_gpio(15) != 15)							/* Yellow button (start) */
+		return 1;
+
+	sleep(1);
+
+
+	if(gpio::set_direction(7, DIR_OUT))
+		return 1;
+
+	if(gpio::set_direction(8, DIR_OUT))
+		return 1;
+
+	if(gpio::set_direction(11, DIR_OUT))
+		return 1;
+
+	if(gpio::set_direction(9, DIR_OUT))
+		return 1;
+
+	if(gpio::set_direction(4, DIR_OUT))
+		return 1;
+
+	if(gpio::set_direction(17, DIR_OUT))
 		return 1;
 
 	if(gpio::set_direction(14, DIR_IN))
@@ -22,16 +63,15 @@ int main(int argc, char *argv[])
 	if(gpio::set_direction(15, DIR_IN))
 		return 1;
 
-	if(gpio::get_direction(14) != DIR_IN)
-		return 1;
+	gpio::set_value(15, 1);
 
-	if(gpio::get_direction(15) != DIR_IN)
-		return 1;
+	printf("[ENGRAVER] Finished setting up all I/O pins\n");
+
 
 
 	while(1)
 	{
-		if(gpio::get_value(15)) reboot(LINUX_REBOOT_CMD_HALT);
+		if(gpio::get_value(14)) reboot(LINUX_REBOOT_CMD_HALT);
 	}
 
 
