@@ -13,7 +13,7 @@
 #define mmperrotationstepperx (800/211)	// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery (1030/267)	// Aantal mm per volledige rotatie van de stapper van de y as
 
-int map[800][800];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
+int map[377][559];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
 int currentvector[2] = { 0,0 };			// huidige locatie van de laser
 double startvector[2];						// begin punt van de lijn
 double endvector[2];						// eind punt van de lijn
@@ -42,9 +42,9 @@ void plotter::findLine() {														// zoek de lijn door:
 	bool stop = false;
 	for (i = 0; i < 594 && stop == false; i++) {					    // alle pixels van links naar rechts
 		for (j = 0; j < 420 && stop == false; j++) {					// en van boven naar onder door te lopen
-			if (map[j][i] == 255) {
-				startvector[0] = j;
-				startvector[1] = i;
+			if (map[j][i] != 0) {
+				startvector[0] = (j*(800/377);
+				startvector[1] = (i*(1030/559);
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}																
@@ -52,9 +52,9 @@ void plotter::findLine() {														// zoek de lijn door:
 	stop = false;
 	for (i = 594; i >= 0 && stop == false; i--) {						// alle pixels van rechts naar links
 		for (j = 420; j >= 0 && stop == false; j--) {					// en van onder naar boven door te lopen
-			if (map[j][i] == 255) {
-				endvector[0] = j;
-				endvector[1] = i;
+			if (map[j][i] != 0) {
+				endvector[0] = (j*(800/377);
+				endvector[1] = (i*(1030/559);
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}
