@@ -13,7 +13,7 @@
 #define mmperrotationstepperx (800/211)	// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery (1030/267)	// Aantal mm per volledige rotatie van de stapper van de y as
 
-int map[800][800];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
+int map[377][559];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
 int currentvector[2] = { 0,0 };			// huidige locatie van de laser
 double startvector[2];						// begin punt van de lijn
 double endvector[2];						// eind punt van de lijn
@@ -22,12 +22,16 @@ int stepperxlocation = 1;				// huidige positie van stepper 1
 int stepperylocation = 1;				// huidige positie van stepper 2
 
 
-Plotter::Plotter()
+plotter::plotter()
 {
 	setOutput(true,false,false,false,true,false,false,false,false);		// eerste uitput zodat de steppers allemaal goed staan
 }
 
-void Plotter::moveTo(int x, int y, bool laser) {
+void setMap(int x, int y, int value){
+	map[x][y] = value;
+}
+
+void plotter::moveTo(int x, int y, bool laser) {
 	instructions[0] = 0;
 	instructions[1] = 0;
 	instructions[0] = (x - currentvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het aangegeven punt te komen
@@ -37,14 +41,14 @@ void Plotter::moveTo(int x, int y, bool laser) {
 	currentvector[1] = y;
 } 
       
-void Plotter::findLine() {														// zoek de lijn door:
+void plotter::findLine() {														// zoek de lijn door:
 	int i, j;
 	bool stop = false;
 	for (i = 0; i < 594 && stop == false; i++) {					    // alle pixels van links naar rechts
 		for (j = 0; j < 420 && stop == false; j++) {					// en van boven naar onder door te lopen
-			if (map[j][i] == 255) {
-				startvector[0] = j;
-				startvector[1] = i;
+			if (map[j][i] != 0) {
+				startvector[0] = (j*(800/377));
+				startvector[1] = (i*(1030/559));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}																
@@ -52,9 +56,9 @@ void Plotter::findLine() {														// zoek de lijn door:
 	stop = false;
 	for (i = 594; i >= 0 && stop == false; i--) {						// alle pixels van rechts naar links
 		for (j = 420; j >= 0 && stop == false; j--) {					// en van onder naar boven door te lopen
-			if (map[j][i] == 255) {
-				endvector[0] = j;
-				endvector[1] = i;
+			if (map[j][i] != 0) {
+				endvector[0] = (j*(800/377));
+				endvector[1] = (i*(1030/559));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}
@@ -62,17 +66,17 @@ void Plotter::findLine() {														// zoek de lijn door:
 
 }
 
-void Plotter::loadStart() {
+void plotter::loadStart() {
 	instructions[0] = startvector[0] / mmperrotationstepperx;			// berekend het aantal rotaties om naar het begin punt te komen
 	instructions[1] = startvector[1] / mmperrotationsteppery;			// berekend het aantal rotaties om naar het begin punt te komen
 }
 
-void Plotter::loadLine() {
+void plotter::loadLine() {
 	instructions[0] = (endvector[0] - startvector[0]) / mmperrotationstepperx;	// berekend het aantal rotaties om naar het eind punt te komen
 	instructions[1] = (endvector[1] - startvector[1]) / mmperrotationsteppery;	// berekend het aantal rotaties om naar het eind punt te komen
 }
 
-void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitgevoerd
+void plotter::run(bool laser) {									// zorgt dat de instructies worden uitgevoerd
 	using namespace std::this_thread;					
 	using namespace std::chrono; 
 
@@ -165,7 +169,7 @@ void Plotter::run(bool laser) {									// zorgt dat de instructies worden uitge
       	}
 }
 
-std::array<bool, 4> Plotter::getOutputstepper(int nextStep) {	// Switch die een 4 bools returned aan de hand van de ingevoerde waarde
+std::array<bool, 4> plotter::getOutputstepper(int nextStep) {	// Switch die een 4 bools returned aan de hand van de ingevoerde waarde
 	std::array<bool, 4> boolarray;
 	switch (nextStep) {
 	case 1: boolarray[0] = true; boolarray[1] = false; boolarray[2] = false; boolarray[3] = false; break;
@@ -180,7 +184,7 @@ std::array<bool, 4> Plotter::getOutputstepper(int nextStep) {	// Switch die een 
 		return boolarray;
 }
 
-void Plotter::setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9) {
+void plotter::setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9) {
 	// 
 }
 
