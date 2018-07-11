@@ -27,7 +27,7 @@ plotter::plotter()
 	setOutput(true,false,false,false,true,false,false,false,false);		// eerste uitput zodat de steppers allemaal goed staan
 }
 
-setMap(int x, int y, int value){
+void setMap(int x, int y, int value){
 	map[x][y] = value;
 }
 
@@ -47,8 +47,8 @@ void plotter::findLine() {														// zoek de lijn door:
 	for (i = 0; i < 594 && stop == false; i++) {					    // alle pixels van links naar rechts
 		for (j = 0; j < 420 && stop == false; j++) {					// en van boven naar onder door te lopen
 			if (map[j][i] != 0) {
-				startvector[0] = (j*(800/377);
-				startvector[1] = (i*(1030/559);
+				startvector[0] = (j*(800/377));
+				startvector[1] = (i*(1030/559));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}																
@@ -57,8 +57,8 @@ void plotter::findLine() {														// zoek de lijn door:
 	for (i = 594; i >= 0 && stop == false; i--) {						// alle pixels van rechts naar links
 		for (j = 420; j >= 0 && stop == false; j--) {					// en van onder naar boven door te lopen
 			if (map[j][i] != 0) {
-				endvector[0] = (j*(800/377);
-				endvector[1] = (i*(1030/559);
+				endvector[0] = (j*(800/377));
+				endvector[1] = (i*(1030/559));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}
