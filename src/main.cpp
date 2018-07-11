@@ -87,10 +87,10 @@ void start(Camera &c)
 	void *sm = c.capture(800, 800);
 	Imageprocessor i(sm, 800, 800);
 
-	i.crop(sm, 3, 3, 798, 798);
-
     std::vector<unsigned char> grey = i.toGrey(sm);         /* Convert the RGB24 to greyscale so our next operations will succeed */
+	i.crop(grey, 17, 139, 576, 516);
 
     std::vector<unsigned char> blur = i.blur(grey);         /* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
-    std::vector<Imageprocessor::sobel> sobel = i.toSobel(blur); /* Do the sobel operator to do the first edge detection */
+    std::vector<Imageprocessor::sobel> sobel = i.toSobel(blur); /* Do the sobel operator to do the first edge detection */y
+
 }

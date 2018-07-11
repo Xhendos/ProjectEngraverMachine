@@ -15,22 +15,43 @@ Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 	height = h;
 }
 
-void *Imageprocessor::crop(void *pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right)
+char *Imageprocessor::crop(std::vector<unsigned char> pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right)
 {
-	void *ret = malloc((x_right - x_left) * (y_right - y_left));
-	int x, y, counter = 0;
 
-	for(unsigned int index = 0; index < (width * height); index++)
+	char *ret = (char *) malloc((x_right - x_left) * (y_right - y_left));
+	int x_original, y_original, counter = 0;
+
+	for(unsigned int index = 1; index <= (width * height); index++)
 	{
-		x = index % width;
-		y = index / width;
+		x_original = index % width;
+		y_original = (index / width) + 1;
 
-		if((x >= x_left && x <= x_right) && (y >= y_left && y <= y_right))
+		if((x_original >= x_left && x_original < x_right) && (y_original >= y_left && y_original < y_right))
 		{
-			*((char *) ret + counter) = *((char *) pixels + index);
+			*((char *) ret + counter) = pixels[index - 1];
 			counter++;
 		}
 	}
+
+	printf("Counter is %d\n", counter);
+	/*
+	int _x = 0, _y = 0;
+
+	for(int i = 1; i <= 800; i++)
+	{
+		for(int j = 1; j <= 800; j++)
+		{
+			if((i * j) > ((800 * y_left) - 1) && (i*j) <= (800 * y_right))
+			{
+				if(j >= x_left && j <= x_right)
+				{
+					*((char *) ret + counter) = *((char *) pixels + ((i * j) -1));
+           			counter++;
+				}
+			}
+		}
+	}
+	*/
 
 	sf::Image image;
     image.create((x_right - x_left), (y_right - y_left));
