@@ -27,6 +27,10 @@ plotter::plotter()
 	setOutput(true,false,false,false,true,false,false,false,false);		// eerste uitput zodat de steppers allemaal goed staan
 }
 
+setMap(int x, int y, int value){
+	map[x][y] = value;
+}
+
 void plotter::moveTo(int x, int y, bool laser) {
 	instructions[0] = 0;
 	instructions[1] = 0;
