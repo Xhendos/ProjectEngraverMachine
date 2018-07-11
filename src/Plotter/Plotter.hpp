@@ -1,9 +1,9 @@
 #include <array>
 
-class Plotter
+class plotter
 {
 public:
-	Plotter();
+	plotter();
 	void moveTo(int x, int y, bool laser);
 	void findLine();
 	void loadStart();
