@@ -6,6 +6,8 @@
 #include <iostream>
 #include <array>
 
+#include <stdio.h>
+
 #include "../Gpio/Gpio.hpp" 
 #include "Plotter.hpp"
 
@@ -13,7 +15,7 @@
 #define mmperrotationstepperx (800/211)	// Aantal mm per volledige rotatie van de stapper van de x as
 #define mmperrotationsteppery (1030/267)	// Aantal mm per volledige rotatie van de stapper van de y as
 
-int map[377][559];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
+unsigned char  map[377][559];						// dubbele array die staan voor de pixels van de foto met de kleur als waarde
 int currentvector[2] = { 0,0 };			// huidige locatie van de laser
 double startvector[2];						// begin punt van de lijn
 double endvector[2];						// eind punt van de lijn
@@ -28,7 +30,7 @@ plotter::plotter()
 }
 
 
-void setMap(int x, int y, int value){
+void plotter::setMap(int x, int y, unsigned char value){
 	map[x][y] = value;
 }
 
@@ -45,9 +47,9 @@ void plotter::moveTo(int x, int y, bool laser) {
 void plotter::findLine() {														// zoek de lijn door:
 	int i, j;
 	bool stop = false;
-	for (i = 0; i < 594 && stop == false; i++) {					    // alle pixels van links naar rechts
-		for (j = 0; j < 420 && stop == false; j++) {					// en van boven naar onder door te lopen
-			if (map[j][i] != 0) {
+	for (i = 0; i < 559 && stop == false; i++) {					    // alle pixels van links naar rechts
+		for (j = 0; j < 377 && stop == false; j++) {					// en van boven naar onder door te lopen
+			if (map[j][i] > 220) {
 				startvector[0] = (j*(800/377));
 				startvector[1] = (i*(1030/559));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
@@ -55,16 +57,17 @@ void plotter::findLine() {														// zoek de lijn door:
 		}																
 	}
 	stop = false;
-	for (i = 594; i >= 0 && stop == false; i--) {						// alle pixels van rechts naar links
-		for (j = 420; j >= 0 && stop == false; j--) {					// en van onder naar boven door te lopen
-			if (map[j][i] != 0) {
+	for (i = 559; i >= 0 && stop == false; i--) {						// alle pixels van rechts naar links
+		for (j = 377; j >= 0 && stop == false; j--) {					// en van onder naar boven door te lopen
+			if (map[j][i] > 220) {
 				endvector[0] = (j*(800/377));
-				endvector[1] = (i*(1030/559));
+				endvector[1] = (i*(1030/420));
 				stop = true;											// eerste zwarte pixel word opgeslagen als begin punt
 			}
 		}
 	}
-
+	printf("(%f, %f) \n", startvector[0], startvector[1]);
+	printf("(%f, %f) \n", endvector[0], endvector[1]);
 }
 
 void plotter::loadStart() {

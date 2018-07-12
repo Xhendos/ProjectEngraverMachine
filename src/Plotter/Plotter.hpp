@@ -11,7 +11,7 @@ public:
 	void run(bool laser);
 	std::array<bool, 4> getOutputstepper(int nextStep);
 	void setOutput(bool c1, bool c2, bool c3, bool c4, bool c5, bool c6, bool c7, bool c8, bool c9);
-	void setMap(int x, int y, int value);
+	void setMap(int x, int y, unsigned char value);
 private:
 
 };

@@ -15,10 +15,17 @@ Imageprocessor::Imageprocessor(void *sm, unsigned int w, unsigned int h)
 	height = h;
 }
 
-char *Imageprocessor::crop(std::vector<unsigned char> pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right)
+void Imageprocessor::setSize(unsigned int w, unsigned int h)
+{
+	width = w;
+	height = h;
+}
+
+std::vector<unsigned char> Imageprocessor::crop(std::vector<unsigned char> pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right)
 {
 
-	char *ret = (char *) malloc((x_right - x_left) * (y_right - y_left));
+	//char *ret = (char *) malloc((x_right - x_left) * (y_right - y_left));
+	std::vector<unsigned char> ret;
 	int x_original, y_original, counter = 0;
 
 	for(unsigned int index = 1; index <= (width * height); index++)
@@ -28,7 +35,8 @@ char *Imageprocessor::crop(std::vector<unsigned char> pixels, unsigned int x_lef
 
 		if((x_original >= x_left && x_original < x_right) && (y_original >= y_left && y_original < y_right))
 		{
-			*((char *) ret + counter) = pixels[index - 1];
+			// *((char *) ret + counter) = pixels[index - 1];
+			ret.push_back(pixels[index - 1]);
 			counter++;
 		}
 	}
@@ -58,8 +66,9 @@ char *Imageprocessor::crop(std::vector<unsigned char> pixels, unsigned int x_lef
     for(int y=0; y<(y_right - y_left); y++){
         for(int x=0; x<(x_right - x_left); x++){
             int index=(y*(x_right - x_left) + x);
-            sf::Color c(*((char *) ret + index), *((char *) ret + index), *((char *)ret + index));
-            image.setPixel(x,y,c);
+            //sf::Color c(*((char *) ret + index), *((char *) ret + index), *((char *)ret + index));
+            sf::Color c(ret[index], ret[index], ret[index]);
+			image.setPixel(x,y,c);
         }
     }
 

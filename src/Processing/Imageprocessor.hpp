@@ -20,9 +20,11 @@ class Imageprocessor
             short int m;                                        /* Magnitude (edge strength) */
             double    a;                                        /* Local edge orientation angle (degrees) */
         };
+		void setSize(unsigned int w, unsigned int h);
+
     	
         Imageprocessor(void *sm, unsigned int w, unsigned int h);
-		char *crop(std::vector<unsigned char> pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right);
+		std::vector<unsigned char> crop(std::vector<unsigned char> pixels, unsigned int x_left, unsigned int y_left, unsigned int x_right, unsigned int y_right);
 
 		std::vector<unsigned char> toGrey(void *start);
 		std::vector<unsigned char> blur(std::vector<unsigned char> grey);

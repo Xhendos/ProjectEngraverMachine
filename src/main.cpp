@@ -84,13 +84,35 @@ int main(int argc, char *argv[])
 
 void start(Camera &c)
 {
+	plotter p;
+
 	void *sm = c.capture(800, 800);
 	Imageprocessor i(sm, 800, 800);
 
     std::vector<unsigned char> grey = i.toGrey(sm);         /* Convert the RGB24 to greyscale so our next operations will succeed */
-	i.crop(grey, 17, 139, 576, 516);
+	std::vector<unsigned char> cropped = i.crop(grey, 17, 139, 576, 516);
 
-    std::vector<unsigned char> blur = i.blur(grey);         /* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
-    std::vector<Imageprocessor::sobel> sobel = i.toSobel(blur); /* Do the sobel operator to do the first edge detection */y
+	i.setSize(559, 377);
 
+    std::vector<unsigned char> blur = i.blur(cropped);         /* Do a gaussian blur so we reduce the amount of 'ruis' in next steps */
+    std::vector<Imageprocessor::sobel> sobel = i.toSobel(cropped); /* Do the sobel operator to do the first edge detection */
+
+	int index = 0;
+	for(int x = 376; x >= 0; x--)
+	{
+		for(int y = 0; y <= 558; y++)
+		{
+			p.setMap(x, y, sobel[index].m);
+			index++;
+		}
+	}
+	printf("[ENGRAVER] Set to (0,0) and press the yellow button\n");
+	while(!gpio::get_value(15)) sleep(1);
+	p.findLine();
+
+	p.loadStart();
+
+	p.run(false);
+	p.loadLine();
+	p.run(true);
 }
